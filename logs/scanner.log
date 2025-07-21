@@ -1,0 +1,40 @@
+2025-07-21 19:47:57,773 - INFO - Scanning directory: .
+2025-07-21 19:47:57,773 - DEBUG - Collected: .\cli\main.py
+2025-07-21 19:47:57,773 - DEBUG - Collected: .\indexer\parser.py
+2025-07-21 19:47:57,774 - DEBUG - Collected: .\indexer\scanner.py
+2025-07-21 19:47:57,774 - DEBUG - Collected: .\logger\log_config.py
+2025-07-21 19:47:57,774 - DEBUG - Collected: .\server\api.py
+2025-07-21 19:47:57,774 - INFO - Total files collected: 5
+2025-07-21 19:47:57,777 - INFO - Parsed 1 chunks from .\cli\main.py
+2025-07-21 19:47:57,781 - INFO - Parsed 2 chunks from .\indexer\parser.py
+2025-07-21 19:47:57,783 - INFO - Parsed 3 chunks from .\indexer\scanner.py
+2025-07-21 19:47:57,784 - INFO - Parsed 1 chunks from .\logger\log_config.py
+2025-07-21 19:47:57,786 - INFO - Parsed 0 chunks from .\server\api.py
+2025-07-21 19:47:57,787 - INFO - Saved 1 chunks to data\main.py.parsed.json
+2025-07-21 19:47:57,788 - INFO - Saved 2 chunks to data\parser.py.parsed.json
+2025-07-21 19:47:57,789 - INFO - Saved 3 chunks to data\scanner.py.parsed.json
+2025-07-21 19:47:57,789 - INFO - Saved 1 chunks to data\log_config.py.parsed.json
+2025-07-21 19:49:24,089 - INFO - 📂 Scanning codebase under: .
+2025-07-21 19:49:24,089 - INFO - Scanning directory: .
+2025-07-21 19:49:24,089 - DEBUG - Collected: .\cli\main.py
+2025-07-21 19:49:24,089 - DEBUG - Collected: .\indexer\parser.py
+2025-07-21 19:49:24,089 - DEBUG - Collected: .\indexer\scanner.py
+2025-07-21 19:49:24,090 - DEBUG - Collected: .\logger\log_config.py
+2025-07-21 19:49:24,090 - DEBUG - Collected: .\server\api.py
+2025-07-21 19:49:24,090 - INFO - Total files collected: 5
+2025-07-21 19:49:24,090 - INFO - ✅ Found 5 source files.
+2025-07-21 19:49:24,090 - INFO - 🧠 Parsing: .\cli\main.py
+2025-07-21 19:49:24,091 - INFO - Parsed 1 chunks from .\cli\main.py
+2025-07-21 19:49:24,091 - INFO - 🧠 Parsing: .\indexer\parser.py
+2025-07-21 19:49:24,092 - INFO - Parsed 2 chunks from .\indexer\parser.py
+2025-07-21 19:49:24,093 - INFO - 🧠 Parsing: .\indexer\scanner.py
+2025-07-21 19:49:24,093 - INFO - Parsed 3 chunks from .\indexer\scanner.py
+2025-07-21 19:49:24,093 - INFO - 🧠 Parsing: .\logger\log_config.py
+2025-07-21 19:49:24,095 - INFO - Parsed 4 chunks from .\logger\log_config.py
+2025-07-21 19:49:24,095 - INFO - 🧠 Parsing: .\server\api.py
+2025-07-21 19:49:24,095 - INFO - Parsed 0 chunks from .\server\api.py
+2025-07-21 19:49:24,096 - INFO - Saved 1 chunks to data\main.py.parsed.json
+2025-07-21 19:49:24,096 - INFO - Saved 2 chunks to data\parser.py.parsed.json
+2025-07-21 19:49:24,097 - INFO - Saved 3 chunks to data\scanner.py.parsed.json
+2025-07-21 19:49:24,097 - INFO - Saved 4 chunks to data\log_config.py.parsed.json
+2025-07-21 19:49:24,097 - INFO - 📦 All parsed chunks saved in 'data/' directory.

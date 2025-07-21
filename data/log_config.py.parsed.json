@@ -1,0 +1,34 @@
+[
+  {
+    "file": "log_config.py",
+    "start_line": 10,
+    "end_line": 11,
+    "type": "function",
+    "name": "remove_emojis",
+    "code": "def remove_emojis(text):\n    return text.encode('ascii', errors='ignore').decode()"
+  },
+  {
+    "file": "log_config.py",
+    "start_line": 13,
+    "end_line": 19,
+    "type": "class",
+    "name": "SafeStreamHandler",
+    "code": "class SafeStreamHandler(logging.StreamHandler):\n    def emit(self, record):\n        try:\n            record.msg = remove_emojis(str(record.msg))\n            super().emit(record)\n        except Exception:\n            pass"
+  },
+  {
+    "file": "log_config.py",
+    "start_line": 21,
+    "end_line": 39,
+    "type": "function",
+    "name": "setup_logger",
+    "code": "def setup_logger(name):\n    logger = logging.getLogger(name)\n    logger.setLevel(logging.DEBUG)\n\n    if not logger.handlers:\n        # File handler (keeps emojis)\n        fh = logging.FileHandler(LOG_FILE, encoding='utf-8')\n        fh.setLevel(logging.DEBUG)\n        fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))\n\n        # Console handler (strips emojis)\n        ch = SafeStreamHandler(sys.stdout)\n        ch.setLevel(logging.INFO)\n        ch.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))\n\n        logger.addHandler(fh)\n        logger.addHandler(ch)\n\n    return logger"
+  },
+  {
+    "file": "log_config.py",
+    "start_line": 14,
+    "end_line": 19,
+    "type": "function",
+    "name": "emit",
+    "code": "    def emit(self, record):\n        try:\n            record.msg = remove_emojis(str(record.msg))\n            super().emit(record)\n        except Exception:\n            pass"
+  }
+]
