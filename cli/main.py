@@ -30,7 +30,7 @@ def main():
     for file_path in source_files:
         if file_path.endswith(".py"):
             logger.info(f"🧠 Parsing: {file_path}")
-            chunks = parse_python_file(file_path)
+            chunks = parse_python_file(file_path,root_dir=root_dir)
             all_chunks.extend(chunks)
 
     # Step 3: Store parsed chunks

@@ -1,10 +1,15 @@
 [
   {
     "file": "main.py",
-    "start_line": 10,
-    "end_line": 38,
+    "rel_path": "cli/main.py",
+    "repo": "codexpro",
+    "language": "python",
     "type": "function",
     "name": "main",
-    "code": "def main():\n    logger = setup_logger(\"cli\")\n\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\n        \"root_dir\",\n        type=str,\n        help=\"Root directory of the codebase to scan (e.g., ./my_project)\"\n    )\n    args = parser.parse_args()\n    root_dir = args.root_dir\n\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks)\n    logger.info(\"\ud83d\udce6 All parsed chunks saved in 'data/' directory.\")"
+    "qualified_name": "main.main",
+    "start_line": 10,
+    "end_line": 38,
+    "docstring": "",
+    "code": "def main():\n    logger = setup_logger(\"cli\")\n\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\n        \"root_dir\",\n        type=str,\n        help=\"Root directory of the codebase to scan (e.g., ./my_project)\"\n    )\n    args = parser.parse_args()\n    root_dir = args.root_dir\n\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path,root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks)\n    logger.info(\"\ud83d\udce6 All parsed chunks saved in 'data/' directory.\")"
   }
 ]

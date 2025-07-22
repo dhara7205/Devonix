@@ -1,18 +1,28 @@
 [
   {
     "file": "parser.py",
-    "start_line": 9,
-    "end_line": 36,
+    "rel_path": "indexer/parser.py",
+    "repo": "codexpro",
+    "language": "python",
     "type": "function",
     "name": "parse_python_file",
-    "code": "def parse_python_file(file_path):\n    with open(file_path, \"r\", encoding=\"utf-8\") as f:\n        source = f.read()\n\n    try:\n        tree = ast.parse(source, filename=file_path)\n    except SyntaxError as e:\n        logger.error(f\"Syntax error in {file_path}: {e}\")\n        return []\n\n    results = []\n    for node in ast.walk(tree):\n        if isinstance(node, (ast.FunctionDef, ast.ClassDef)):\n            start_line = node.lineno\n            end_line = max(getattr(node, 'end_lineno', node.lineno), node.body[-1].lineno if node.body else node.lineno)\n\n            chunk = {\n                \"file\": os.path.basename(file_path),\n                \"start_line\": start_line,\n                \"end_line\": end_line,\n                \"type\": \"function\" if isinstance(node, ast.FunctionDef) else \"class\",\n                \"name\": node.name,\n                \"code\": \"\\n\".join(source.splitlines()[start_line - 1:end_line])\n            }\n            results.append(chunk)\n\n    logger.info(f\"Parsed {len(results)} chunks from {file_path}\")\n    return results"
+    "qualified_name": "parser.parse_python_file",
+    "start_line": 9,
+    "end_line": 49,
+    "docstring": "",
+    "code": "def parse_python_file(file_path, root_dir=\".\"):\n    with open(file_path, \"r\", encoding=\"utf-8\") as f:\n        source = f.read()\n\n    try:\n        tree = ast.parse(source, filename=file_path)\n    except SyntaxError as e:\n        logger.error(f\"Syntax error in {file_path}: {e}\")\n        return []\n\n    results = []\n    module_name = os.path.splitext(os.path.basename(file_path))[0]\n    rel_path = os.path.relpath(file_path, root_dir).replace(\"\\\\\", \"/\")\n\n    for node in ast.walk(tree):\n        if isinstance(node, (ast.FunctionDef, ast.ClassDef)):\n            start_line = node.lineno\n            end_line = max(getattr(node, 'end_lineno', node.lineno), node.body[-1].lineno if node.body else node.lineno)\n\n            name = node.name\n            node_type = \"function\" if isinstance(node, ast.FunctionDef) else \"class\"\n            docstring = ast.get_docstring(node) or \"\"\n            qualified_name = f\"{module_name}.{name}\"\n\n            chunk = {\n                \"file\": os.path.basename(file_path),\n                \"rel_path\": rel_path,\n                \"repo\": \"codexpro\",  # hardcoded project/repo ID; optional\n                \"language\": \"python\",\n                \"type\": node_type,\n                \"name\": name,\n                \"qualified_name\": qualified_name,\n                \"start_line\": start_line,\n                \"end_line\": end_line,\n                \"docstring\": docstring.strip(),\n                \"code\": \"\\n\".join(source.splitlines()[start_line - 1:end_line])\n            }\n            results.append(chunk)\n\n    logger.info(f\"Parsed {len(results)} chunks from {file_path}\")\n    return results"
   },
   {
     "file": "parser.py",
-    "start_line": 39,
-    "end_line": 51,
+    "rel_path": "indexer/parser.py",
+    "repo": "codexpro",
+    "language": "python",
     "type": "function",
     "name": "save_chunks_to_json",
+    "qualified_name": "parser.save_chunks_to_json",
+    "start_line": 52,
+    "end_line": 64,
+    "docstring": "",
     "code": "def save_chunks_to_json(chunks, output_dir=\"data\"):\n    Path(output_dir).mkdir(parents=True, exist_ok=True)\n\n    file_chunks = {}\n    for chunk in chunks:\n        file_chunks.setdefault(chunk[\"file\"], []).append(chunk)\n\n    for filename, chunk_list in file_chunks.items():\n        output_path = os.path.join(output_dir, f\"{filename}.parsed.json\")\n        with open(output_path, \"w\", encoding=\"utf-8\") as f:\n            json.dump(chunk_list, f, indent=2)\n\n        logger.info(f\"Saved {len(chunk_list)} chunks to {output_path}\")"
   }
 ]

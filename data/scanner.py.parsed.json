@@ -1,26 +1,41 @@
 [
   {
     "file": "scanner.py",
-    "start_line": 9,
-    "end_line": 11,
+    "rel_path": "indexer/scanner.py",
+    "repo": "codexpro",
+    "language": "python",
     "type": "function",
     "name": "is_valid_file",
+    "qualified_name": "scanner.is_valid_file",
+    "start_line": 9,
+    "end_line": 11,
+    "docstring": "",
     "code": "def is_valid_file(file_path):\n    _, ext = os.path.splitext(file_path)\n    return ext in VALID_EXTENSIONS"
   },
   {
     "file": "scanner.py",
-    "start_line": 13,
-    "end_line": 14,
+    "rel_path": "indexer/scanner.py",
+    "repo": "codexpro",
+    "language": "python",
     "type": "function",
     "name": "should_exclude",
+    "qualified_name": "scanner.should_exclude",
+    "start_line": 13,
+    "end_line": 14,
+    "docstring": "",
     "code": "def should_exclude(path):\n    return any(excluded in path.split(os.sep) for excluded in EXCLUDE_DIRS)"
   },
   {
     "file": "scanner.py",
-    "start_line": 16,
-    "end_line": 34,
+    "rel_path": "indexer/scanner.py",
+    "repo": "codexpro",
+    "language": "python",
     "type": "function",
     "name": "scan_codebase",
+    "qualified_name": "scanner.scan_codebase",
+    "start_line": 16,
+    "end_line": 34,
+    "docstring": "",
     "code": "def scan_codebase(root_dir):\n    collected_files = []\n\n    logger.info(f\"Scanning directory: {root_dir}\")\n    for dirpath, dirnames, filenames in os.walk(root_dir):\n        dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS]\n\n        if should_exclude(dirpath):\n            logger.debug(f\"Skipping excluded directory: {dirpath}\")\n            continue\n\n        for file in filenames:\n            file_path = os.path.join(dirpath, file)\n            if is_valid_file(file_path):\n                collected_files.append(file_path)\n                logger.debug(f\"Collected: {file_path}\")\n\n    logger.info(f\"Total files collected: {len(collected_files)}\")\n    return collected_files"
   }
 ]
