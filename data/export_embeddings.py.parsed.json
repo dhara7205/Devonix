@@ -1,0 +1,67 @@
+[
+  {
+    "file": "export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "generate_and_save_embeddings",
+    "qualified_name": "export_embeddings.generate_and_save_embeddings",
+    "start_line": 12,
+    "end_line": 15,
+    "docstring": "",
+    "code": "def generate_and_save_embeddings(data_dir, output_path, model_name):\n    chunks = load_chunks(data_dir)\n    embeddings = embed_chunks(chunks, model_name)\n    save_faiss_index(np.array(embeddings).astype(\"float32\"), chunks, output_path)"
+  },
+  {
+    "file": "export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "load_chunks",
+    "qualified_name": "export_embeddings.load_chunks",
+    "start_line": 18,
+    "end_line": 24,
+    "docstring": "",
+    "code": "def load_chunks(data_dir):\n    chunks = []\n    for file in Path(data_dir).glob(\"*.parsed.json\"):\n        with open(file, \"r\", encoding=\"utf-8\") as f:\n            chunks.extend(json.load(f))\n    logger.info(f\"Loaded {len(chunks)} code chunks from {data_dir}\")\n    return chunks"
+  },
+  {
+    "file": "export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "embed_chunks",
+    "qualified_name": "export_embeddings.embed_chunks",
+    "start_line": 26,
+    "end_line": 31,
+    "docstring": "",
+    "code": "def embed_chunks(chunks, model_name=\"all-MiniLM-L6-v2\"):\n    model = SentenceTransformer(model_name)\n    texts = [chunk[\"code\"] for chunk in chunks]\n    embeddings = model.encode(texts, show_progress_bar=True)\n    logger.info(f\"Generated embeddings for {len(embeddings)} chunks\")\n    return embeddings"
+  },
+  {
+    "file": "export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "save_faiss_index",
+    "qualified_name": "export_embeddings.save_faiss_index",
+    "start_line": 33,
+    "end_line": 47,
+    "docstring": "",
+    "code": "def save_faiss_index(embeddings, chunks, output_dir=\"vector_store\", index_name=\"faiss_index\"):\n    os.makedirs(output_dir, exist_ok=True)\n\n    index_path = os.path.join(output_dir, f\"{index_name}.index\")\n    metadata_path = os.path.join(output_dir, f\"{index_name}.meta.json\")\n\n    index = faiss.IndexFlatL2(embeddings.shape[1])\n    index.add(embeddings)\n\n    faiss.write_index(index, index_path)\n    with open(metadata_path, \"w\", encoding=\"utf-8\") as f:\n        json.dump(chunks, f, indent=2)\n\n    logger.info(f\"FAISS index saved to: {index_path}\")\n    logger.info(f\"Metadata saved to: {metadata_path}\")"
+  },
+  {
+    "file": "export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "main",
+    "qualified_name": "export_embeddings.main",
+    "start_line": 49,
+    "end_line": 56,
+    "docstring": "",
+    "code": "def main():\n    data_dir = \"data\"\n    output_path = \"faiss_index\"\n    model_name = \"all-MiniLM-L6-v2\"\n\n    chunks = load_chunks(data_dir)\n    embeddings = embed_chunks(chunks, model_name)\n    save_faiss_index(np.array(embeddings).astype(\"float32\"), chunks, output_path)"
+  }
+]

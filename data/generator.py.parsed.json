@@ -1,0 +1,41 @@
+[
+  {
+    "file": "generator.py",
+    "rel_path": "embeddings/generator.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "embed_text",
+    "qualified_name": "generator.embed_text",
+    "start_line": 12,
+    "end_line": 13,
+    "docstring": "",
+    "code": "def embed_text(text: str):\n    return model.encode([text])[0]"
+  },
+  {
+    "file": "generator.py",
+    "rel_path": "embeddings/generator.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "load_chunks",
+    "qualified_name": "generator.load_chunks",
+    "start_line": 15,
+    "end_line": 24,
+    "docstring": "",
+    "code": "def load_chunks(data_dir=\"data\"):\n    chunks = []\n    for filename in os.listdir(data_dir):\n        if filename.endswith(\".parsed.json\"):\n            filepath = os.path.join(data_dir, filename)\n            with open(filepath, \"r\", encoding=\"utf-8\") as f:\n                parsed = json.load(f)\n                chunks.extend(parsed)\n                logger.info(f\"Loaded {len(parsed)} chunks from {filename}\")\n    return chunks"
+  },
+  {
+    "file": "generator.py",
+    "rel_path": "embeddings/generator.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "build_embedding_dataset",
+    "qualified_name": "generator.build_embedding_dataset",
+    "start_line": 26,
+    "end_line": 42,
+    "docstring": "",
+    "code": "def build_embedding_dataset(chunks, output_path=\"data/embeddings.json\"):\n    embedded_data = []\n    for chunk in chunks:\n        text = chunk.get(\"docstring\", \"\") + \"\\n\" + chunk.get(\"code\", \"\")\n        vector = embed_text(text)\n\n        entry = {\n            \"vector\": vector,\n            **chunk  # include all metadata (rel_path, language, etc.)\n        }\n        embedded_data.append(entry)\n        logger.debug(f\"Embedded: {chunk['qualified_name']}\")\n\n    with open(output_path, \"w\", encoding=\"utf-8\") as f:\n        json.dump(embedded_data, f, indent=2)\n\n    logger.info(f\"Saved {len(embedded_data)} embeddings to {output_path}\")"
+  }
+]
