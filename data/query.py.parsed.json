@@ -7,8 +7,8 @@
     "type": "function",
     "name": "load_faiss_index",
     "qualified_name": "query.load_faiss_index",
-    "start_line": 22,
-    "end_line": 33,
+    "start_line": 25,
+    "end_line": 36,
     "docstring": "",
     "code": "def load_faiss_index(index_dir, index_name):\n    index_path = os.path.join(index_dir, f\"{index_name}.index\")\n    meta_path = os.path.join(index_dir, f\"{index_name}.meta.json\")\n\n    if not os.path.exists(index_path) or not os.path.exists(meta_path):\n        raise FileNotFoundError(\"FAISS index or metadata file not found.\")\n\n    index = faiss.read_index(index_path)\n    with open(meta_path, \"r\", encoding=\"utf-8\") as f:\n        metadata = json.load(f)\n\n    return index, metadata"
   },
@@ -20,8 +20,8 @@
     "type": "function",
     "name": "embed_query",
     "qualified_name": "query.embed_query",
-    "start_line": 35,
-    "end_line": 36,
+    "start_line": 38,
+    "end_line": 39,
     "docstring": "",
     "code": "def embed_query(query):\n    return embed_model.encode([query])[0]  # returns 1D array"
   },
@@ -33,10 +33,10 @@
     "type": "function",
     "name": "retrieve_top_chunks",
     "qualified_name": "query.retrieve_top_chunks",
-    "start_line": 38,
-    "end_line": 44,
+    "start_line": 41,
+    "end_line": 58,
     "docstring": "",
-    "code": "def retrieve_top_chunks(query_vec, index, metadata, k=TOP_K):\n    D, I = index.search(np.array([query_vec]), k)\n    top_chunks = []\n    for idx in I[0]:\n        if idx < len(metadata):\n            top_chunks.append(metadata[idx])\n    return top_chunks"
+    "code": "def retrieve_top_chunks(query_vec, index, metadata, k=TOP_K):\n    D, I = index.search(np.array([query_vec]), k)\n\n    top_chunks = []\n    for score, idx in zip(D[0], I[0]):\n        if idx < len(metadata):\n            chunk = metadata[idx]\n            chunk[\"score\"] = float(score)  # Lower score = more similar\n            chunk[\"content\"] = chunk.get(\"docstring\", \"\") + \"\\n\" + chunk.get(\"code\", \"\")\n            top_chunks.append(chunk)\n\n    # Sort by ascending distance (i.e., higher semantic relevance)\n    top_chunks.sort(key=lambda x: x[\"score\"])\n\n    for i, chunk in enumerate(top_chunks):\n        print(f\"\\n--- Chunk {i} (Score: {chunk['score']:.4f}) ---\\n{chunk}\")\n\n    return top_chunks"
   },
   {
     "file": "query.py",
@@ -46,10 +46,10 @@
     "type": "function",
     "name": "build_prompt",
     "qualified_name": "query.build_prompt",
-    "start_line": 46,
-    "end_line": 49,
+    "start_line": 61,
+    "end_line": 66,
     "docstring": "",
-    "code": "def build_prompt(chunks, query):\n    context = \"\\n---\\n\".join(chunk.get(\"content\", \"\") for chunk in chunks)\n    prompt = f\"Context:\\n{context}\\n\\nQuestion: {query}\\nAnswer:\"\n    return prompt"
+    "code": "def build_prompt(chunks, query):\n    context = \"\\n---\\n\".join(chunk.get(\"content\", \"\") for chunk in chunks)\n    prompt = f\"Context:\\n{context}\\n\\nQuestion: {query}\\nAnswer:\"\n    print(\"=================================HERE IS THE PROMPT==================================\")\n    print(prompt)\n    return prompt"
   },
   {
     "file": "query.py",
@@ -59,8 +59,8 @@
     "type": "function",
     "name": "simulate_answer",
     "qualified_name": "query.simulate_answer",
-    "start_line": 51,
-    "end_line": 56,
+    "start_line": 68,
+    "end_line": 73,
     "docstring": "",
     "code": "def simulate_answer(prompt):\n    # For now, just simulate answer\n    print(\"\\n\ud83d\udcc4 Generated Prompt Sent to Model:\\n\")\n    print(prompt)\n    print(\"\\n\ud83e\udd16 Answer:\")\n    return \"This is a simulated answer based on the retrieved context.\""
   },
@@ -70,24 +70,11 @@
     "repo": "codexpro",
     "language": "python",
     "type": "function",
-    "name": "call_gemini",
-    "qualified_name": "query.call_gemini",
-    "start_line": 59,
-    "end_line": 69,
-    "docstring": "",
-    "code": "def call_gemini(prompt):\n    api_key = os.getenv(\"API_KEY\")  # recommended\n    if not api_key:\n        raise ValueError(\"GEMINI_API_KEY not set in environment.\")\n    \n    genai.configure(api_key=api_key)\n\n    model = genai.GenerativeModel(\"gemini-pro\")\n    response = model.generate_content(prompt)\n    \n    return response.text.strip()"
-  },
-  {
-    "file": "query.py",
-    "rel_path": "cli/query.py",
-    "repo": "codexpro",
-    "language": "python",
-    "type": "function",
     "name": "main",
     "qualified_name": "query.main",
-    "start_line": 72,
-    "end_line": 90,
+    "start_line": 77,
+    "end_line": 95,
     "docstring": "",
-    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Ask a question to your codebase.\")\n    parser.add_argument(\"question\", type=str, help=\"The natural language question to ask\")\n    args = parser.parse_args()\n\n    logger.info(\"Embedding query...\")\n    query_vec = embed_query(args.question)\n\n    logger.info(\"Loading index and metadata...\")\n    index, metadata = load_faiss_index(INDEX_DIR, INDEX_NAME)\n\n    logger.info(\"Searching for top chunks...\")\n    top_chunks = retrieve_top_chunks(query_vec, index, metadata)\n\n    logger.info(f\"Retrieved {len(top_chunks)} chunks.\")\n    prompt = build_prompt(top_chunks, args.question)\n\n    answer = call_gemini(prompt)\n    print(answer)"
+    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Ask a question to your codebase.\")\n    parser.add_argument(\"question\", type=str, help=\"The natural language question to ask\")\n    args = parser.parse_args()\n\n    logger.info(\"Embedding query...\")\n    query_vec = embed_query(args.question)\n\n    logger.info(\"Loading index and metadata...\")\n    index, metadata = load_faiss_index(INDEX_DIR, INDEX_NAME)\n\n    logger.info(\"Searching for top chunks...\")\n    top_chunks = retrieve_top_chunks(query_vec, index, metadata)\n\n    logger.info(f\"Retrieved {len(top_chunks)} chunks.\")\n    prompt = build_prompt(top_chunks, args.question)\n\n    answer = get_answer(prompt)\n    print(answer)"
   }
 ]

@@ -1,0 +1,15 @@
+[
+  {
+    "file": "llm_client.py",
+    "rel_path": "llm/llm_client.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "get_answer",
+    "qualified_name": "llm_client.get_answer",
+    "start_line": 18,
+    "end_line": 46,
+    "docstring": "Sends a prompt to Gemini 2.5 Pro and returns the model's text response.",
+    "code": "def get_answer(prompt: str) -> str:\n    \"\"\"\n    Sends a prompt to Gemini 2.5 Pro and returns the model's text response.\n    \"\"\"\n    system_instruction = \"You are a code expert. Answer the question accurately based on the given code context.\"\n\n    payload = {\n        \"contents\": [\n            {\n                \"parts\": [\n                    {\n                        \"text\": f\"{system_instruction}\\n\\n{prompt}\"\n                    }\n                ]\n            }\n        ]\n    }\n\n    try:\n        response = requests.post(API_URL, headers={\"Content-Type\": \"application/json\"}, json=payload)\n        response.raise_for_status()\n\n        data = response.json()\n        return data[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"].strip()\n\n    except requests.exceptions.RequestException as e:\n        return f\"\u274c Request error: {e}\"\n    except KeyError:\n        return f\"\u274c Unexpected response: {response.text}\""
+  }
+]

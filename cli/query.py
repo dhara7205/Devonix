@@ -40,19 +40,39 @@ def embed_query(query):
 
 def retrieve_top_chunks(query_vec, index, metadata, k=TOP_K):
     D, I = index.search(np.array([query_vec]), k)
-    top_chunks = []
-    for idx in I[0]:
-        if idx < len(metadata):
-            top_chunks.append(metadata[idx])
 
-    
-    for i, chunk in enumerate(top_chunks):
-        print(f"\n--- Chunk {i} ---\n{chunk}")
+    top_chunks = []
+    for score, idx in zip(D[0], I[0]):
+        if idx < len(metadata):
+            chunk = metadata[idx]
+            chunk["score"] = float(score)  # Lower score = more similar
+            chunk["content"] = chunk.get("docstring", "") + "\n" + chunk.get("code", "")
+            top_chunks.append(chunk)
+
+    # Sort by ascending distance (i.e., higher semantic relevance)
+    top_chunks.sort(key=lambda x: x["score"])
+
+    # for i, chunk in enumerate(top_chunks):
+    #     print(f"\n--- Chunk {i} (Score: {chunk['score']:.4f}) ---\n{chunk}")
+
     return top_chunks
 
+
 def build_prompt(chunks, query):
-    context = "\n---\n".join(chunk.get("content", "") for chunk in chunks)
+    context_blocks = []
+    for chunk in chunks:
+        filename = chunk.get("rel_path", chunk.get("file", "unknown_file.py"))
+        qualified_name = chunk.get("qualified_name", chunk.get("name", "unknown_function"))
+        content = chunk.get("content", "").strip()
+
+        context_block = f"[File: {filename} | Symbol: {qualified_name}]\n{content}"
+        context_blocks.append(context_block)
+
+    context = "\n---\n".join(context_blocks)
+
     prompt = f"Context:\n{context}\n\nQuestion: {query}\nAnswer:"
+    print("=================================HERE IS THE PROMPT==================================")
+    print(prompt)
     return prompt
 
 def simulate_answer(prompt):
