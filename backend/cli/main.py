@@ -1,0 +1,59 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import argparse
+from indexer.scanner import scan_codebase
+from indexer.parser import parse_python_file, save_chunks_to_json
+from embeddings.export_embeddings import generate_and_save_embeddings
+from logger.log_config import setup_logger
+
+logger = setup_logger("cli")
+
+def run_embedding_pipeline(root_dir, model_name="all-MiniLM-L6-v2", output_dir="faiss_index", data_dir="data"):
+    logger.info(f"📂 Scanning codebase under: {root_dir}")
+
+    # Step 1: Recursively collect relevant source files
+    source_files = scan_codebase(root_dir)
+    logger.info(f"✅ Found {len(source_files)} source files.")
+
+    # Step 2: Parse each Python file
+    all_chunks = []
+    for file_path in source_files:
+        if file_path.endswith(".py"):
+            logger.info(f"🧠 Parsing: {file_path}")
+            chunks = parse_python_file(file_path, root_dir=root_dir)
+            all_chunks.extend(chunks)
+
+    # Step 3: Store parsed chunks
+    save_chunks_to_json(all_chunks, output_dir=data_dir)
+    logger.info(f"📦 All parsed chunks saved in '{data_dir}/' directory.")
+
+    # Step 4: Generate embeddings and export FAISS index
+    logger.info("🔎 Generating embeddings and exporting FAISS index...")
+    generate_and_save_embeddings(
+        data_dir=data_dir,
+        output_path=output_dir,
+        model_name=model_name
+    )
+
+def main():
+    parser = argparse.ArgumentParser(description="Codebase Scanner CLI")
+    parser.add_argument("root_dir", type=str, help="Root directory of the codebase to scan (e.g., ./my_project)")
+    parser.add_argument("--embed", action="store_true", help="Generate embeddings and export FAISS index")
+    parser.add_argument("--model", type=str, default="all-MiniLM-L6-v2", help="Model name for embeddings")
+    parser.add_argument("--output", type=str, default="faiss_index", help="Output path prefix for FAISS index")
+    parser.add_argument("--data-dir", type=str, default="data", help="Directory to store parsed chunks")
+
+    args = parser.parse_args()
+
+    if args.embed:
+        run_embedding_pipeline(
+            root_dir=args.root_dir,
+            model_name=args.model,
+            output_dir=args.output,
+            data_dir=args.data_dir
+        )
+
+if __name__ == "__main__":
+    main()

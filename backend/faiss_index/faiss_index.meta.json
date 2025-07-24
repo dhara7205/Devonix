@@ -174,12 +174,25 @@
     "repo": "codexpro",
     "language": "python",
     "type": "function",
+    "name": "run_embedding_pipeline",
+    "qualified_name": "main.run_embedding_pipeline",
+    "start_line": 13,
+    "end_line": 38,
+    "docstring": "",
+    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\"):\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )"
+  },
+  {
+    "file": "main.py",
+    "rel_path": "cli/main.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
     "name": "main",
     "qualified_name": "main.main",
-    "start_line": 11,
-    "end_line": 71,
+    "start_line": 40,
+    "end_line": 56,
     "docstring": "",
-    "code": "def main():\n    logger = setup_logger(\"cli\")\n\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\n        \"root_dir\",\n        type=str,\n        help=\"Root directory of the codebase to scan (e.g., ./my_project)\"\n    )\n    parser.add_argument(\n        \"--embed\",\n        action=\"store_true\",\n        help=\"Generate embeddings and export FAISS index\"\n    )\n    parser.add_argument(\n        \"--model\",\n        type=str,\n        default=\"all-MiniLM-L6-v2\",\n        help=\"SentenceTransformer model name for embeddings\"\n    )\n    parser.add_argument(\n        \"--output\",\n        type=str,\n        default=\"faiss_index\",\n        help=\"Output path prefix for FAISS index and metadata\"\n    )\n    parser.add_argument(\n        \"--data-dir\",\n        type=str,\n        default=\"data\",\n        help=\"Directory where parsed JSON chunks are saved\"\n    )\n\n    args = parser.parse_args()\n\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {args.root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(args.root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=args.root_dir)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=args.data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{args.data_dir}/' directory.\")\n\n    # Step 4: Optionally generate embeddings and export FAISS index\n    if args.embed:\n        logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n        generate_and_save_embeddings(\n            data_dir=args.data_dir,\n            output_path=args.output,\n            model_name=args.model\n        )"
+    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n\n    args = parser.parse_args()\n\n    if args.embed:\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir\n        )"
   },
   {
     "file": "parser.py",
@@ -215,8 +228,8 @@
     "type": "function",
     "name": "load_faiss_index",
     "qualified_name": "query.load_faiss_index",
-    "start_line": 25,
-    "end_line": 36,
+    "start_line": 26,
+    "end_line": 37,
     "docstring": "",
     "code": "def load_faiss_index(index_dir, index_name):\n    index_path = os.path.join(index_dir, f\"{index_name}.index\")\n    meta_path = os.path.join(index_dir, f\"{index_name}.meta.json\")\n\n    if not os.path.exists(index_path) or not os.path.exists(meta_path):\n        raise FileNotFoundError(\"FAISS index or metadata file not found.\")\n\n    index = faiss.read_index(index_path)\n    with open(meta_path, \"r\", encoding=\"utf-8\") as f:\n        metadata = json.load(f)\n\n    return index, metadata"
   },
@@ -228,10 +241,10 @@
     "type": "function",
     "name": "embed_query",
     "qualified_name": "query.embed_query",
-    "start_line": 38,
-    "end_line": 39,
+    "start_line": 39,
+    "end_line": 40,
     "docstring": "",
-    "code": "def embed_query(query):\n    return embed_model.encode([query])[0]  # returns 1D array"
+    "code": "def embed_query(query):\n    return embed_model.encode([query])[0]  # 1D array"
   },
   {
     "file": "query.py",
@@ -241,10 +254,10 @@
     "type": "function",
     "name": "retrieve_top_chunks",
     "qualified_name": "query.retrieve_top_chunks",
-    "start_line": 41,
-    "end_line": 58,
+    "start_line": 42,
+    "end_line": 54,
     "docstring": "",
-    "code": "def retrieve_top_chunks(query_vec, index, metadata, k=TOP_K):\n    D, I = index.search(np.array([query_vec]), k)\n\n    top_chunks = []\n    for score, idx in zip(D[0], I[0]):\n        if idx < len(metadata):\n            chunk = metadata[idx]\n            chunk[\"score\"] = float(score)  # Lower score = more similar\n            chunk[\"content\"] = chunk.get(\"docstring\", \"\") + \"\\n\" + chunk.get(\"code\", \"\")\n            top_chunks.append(chunk)\n\n    # Sort by ascending distance (i.e., higher semantic relevance)\n    top_chunks.sort(key=lambda x: x[\"score\"])\n\n    for i, chunk in enumerate(top_chunks):\n        print(f\"\\n--- Chunk {i} (Score: {chunk['score']:.4f}) ---\\n{chunk}\")\n\n    return top_chunks"
+    "code": "def retrieve_top_chunks(query_vec, index, metadata, k=TOP_K):\n    D, I = index.search(np.array([query_vec]), k)\n\n    top_chunks = []\n    for score, idx in zip(D[0], I[0]):\n        if idx < len(metadata):\n            chunk = metadata[idx]\n            chunk[\"score\"] = float(score)\n            chunk[\"content\"] = chunk.get(\"docstring\", \"\") + \"\\n\" + chunk.get(\"code\", \"\")\n            top_chunks.append(chunk)\n\n    top_chunks.sort(key=lambda x: x[\"score\"])\n    return top_chunks"
   },
   {
     "file": "query.py",
@@ -254,10 +267,10 @@
     "type": "function",
     "name": "build_prompt",
     "qualified_name": "query.build_prompt",
-    "start_line": 61,
-    "end_line": 66,
+    "start_line": 56,
+    "end_line": 65,
     "docstring": "",
-    "code": "def build_prompt(chunks, query):\n    context = \"\\n---\\n\".join(chunk.get(\"content\", \"\") for chunk in chunks)\n    prompt = f\"Context:\\n{context}\\n\\nQuestion: {query}\\nAnswer:\"\n    print(\"=================================HERE IS THE PROMPT==================================\")\n    print(prompt)\n    return prompt"
+    "code": "def build_prompt(chunks, query):\n    context_blocks = []\n    for chunk in chunks:\n        filename = chunk.get(\"rel_path\", chunk.get(\"file\", \"unknown_file.py\"))\n        qualified_name = chunk.get(\"qualified_name\", chunk.get(\"name\", \"unknown_function\"))\n        content = chunk.get(\"content\", \"\").strip()\n        context_blocks.append(f\"[File: {filename} | Symbol: {qualified_name}]\\n{content}\")\n\n    context = \"\\n---\\n\".join(context_blocks)\n    return f\"Context:\\n{context}\\n\\nQuestion: {query}\\nAnswer:\""
   },
   {
     "file": "query.py",
@@ -265,12 +278,12 @@
     "repo": "codexpro",
     "language": "python",
     "type": "function",
-    "name": "simulate_answer",
-    "qualified_name": "query.simulate_answer",
-    "start_line": 68,
-    "end_line": 73,
+    "name": "run_query_pipeline",
+    "qualified_name": "query.run_query_pipeline",
+    "start_line": 67,
+    "end_line": 88,
     "docstring": "",
-    "code": "def simulate_answer(prompt):\n    # For now, just simulate answer\n    print(\"\\n\ud83d\udcc4 Generated Prompt Sent to Model:\\n\")\n    print(prompt)\n    print(\"\\n\ud83e\udd16 Answer:\")\n    return \"This is a simulated answer based on the retrieved context.\""
+    "code": "def run_query_pipeline(question: str):\n    logger.info(\"Embedding query...\")\n    query_vec = embed_query(question)\n\n    logger.info(\"Loading index and metadata...\")\n    index, metadata = load_faiss_index(INDEX_DIR, INDEX_NAME)\n\n    logger.info(\"Searching for top chunks...\")\n    top_chunks = retrieve_top_chunks(query_vec, index, metadata)\n\n    logger.info(f\"Retrieved {len(top_chunks)} chunks.\")\n    prompt = build_prompt(top_chunks, question)\n\n    logger.info(\"Querying Gemini model...\")\n    answer = get_answer(prompt)\n\n    return {\n        \"question\": question,\n        \"answer\": answer,\n        \"prompt\": prompt,\n        \"chunks\": top_chunks,\n    }"
   },
   {
     "file": "query.py",
@@ -280,10 +293,36 @@
     "type": "function",
     "name": "main",
     "qualified_name": "query.main",
-    "start_line": 77,
-    "end_line": 95,
+    "start_line": 90,
+    "end_line": 96,
     "docstring": "",
-    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Ask a question to your codebase.\")\n    parser.add_argument(\"question\", type=str, help=\"The natural language question to ask\")\n    args = parser.parse_args()\n\n    logger.info(\"Embedding query...\")\n    query_vec = embed_query(args.question)\n\n    logger.info(\"Loading index and metadata...\")\n    index, metadata = load_faiss_index(INDEX_DIR, INDEX_NAME)\n\n    logger.info(\"Searching for top chunks...\")\n    top_chunks = retrieve_top_chunks(query_vec, index, metadata)\n\n    logger.info(f\"Retrieved {len(top_chunks)} chunks.\")\n    prompt = build_prompt(top_chunks, args.question)\n\n    answer = get_answer(prompt)\n    print(answer)"
+    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Ask a question to your codebase.\")\n    parser.add_argument(\"question\", type=str, help=\"The natural language question to ask\")\n    args = parser.parse_args()\n\n    result = run_query_pipeline(args.question)\n    print(\"\\n\ud83e\udd16 Gemini Answer:\\n\", result[\"answer\"])"
+  },
+  {
+    "file": "routes.py",
+    "rel_path": "server/routes.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "embed_codebase",
+    "qualified_name": "routes.embed_codebase",
+    "start_line": 9,
+    "end_line": 16,
+    "docstring": "",
+    "code": "def embed_codebase(req: EmbedRequest):\n    run_embedding_pipeline(\n        root_dir=req.folder_path,\n        model_name=req.model_name,\n        output_dir=req.output_dir,\n        data_dir=req.data_dir\n    )\n    return {\"status\": \"success\", \"message\": \"Embedding completed\"}"
+  },
+  {
+    "file": "routes.py",
+    "rel_path": "server/routes.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "ask_question",
+    "qualified_name": "routes.ask_question",
+    "start_line": 19,
+    "end_line": 21,
+    "docstring": "",
+    "code": "def ask_question(req: AskRequest):\n    result = run_query_pipeline(req.question)\n    return result"
   },
   {
     "file": "scanner.py",
@@ -323,5 +362,31 @@
     "end_line": 34,
     "docstring": "",
     "code": "def scan_codebase(root_dir):\n    collected_files = []\n\n    logger.info(f\"Scanning directory: {root_dir}\")\n    for dirpath, dirnames, filenames in os.walk(root_dir):\n        dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS]\n\n        if should_exclude(dirpath):\n            logger.debug(f\"Skipping excluded directory: {dirpath}\")\n            continue\n\n        for file in filenames:\n            file_path = os.path.join(dirpath, file)\n            if is_valid_file(file_path):\n                collected_files.append(file_path)\n                logger.debug(f\"Collected: {file_path}\")\n\n    logger.info(f\"Total files collected: {len(collected_files)}\")\n    return collected_files"
+  },
+  {
+    "file": "schemas.py",
+    "rel_path": "server/schemas.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "class",
+    "name": "EmbedRequest",
+    "qualified_name": "schemas.EmbedRequest",
+    "start_line": 3,
+    "end_line": 7,
+    "docstring": "",
+    "code": "class EmbedRequest(BaseModel):\n    folder_path: str\n    model_name: str = \"all-MiniLM-L6-v2\"\n    output_dir: str = \"faiss_index\"\n    data_dir: str = \"data\""
+  },
+  {
+    "file": "schemas.py",
+    "rel_path": "server/schemas.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "class",
+    "name": "AskRequest",
+    "qualified_name": "schemas.AskRequest",
+    "start_line": 9,
+    "end_line": 10,
+    "docstring": "",
+    "code": "class AskRequest(BaseModel):\n    question: str"
   }
 ]

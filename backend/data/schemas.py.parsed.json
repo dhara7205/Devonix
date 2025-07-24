@@ -1,0 +1,28 @@
+[
+  {
+    "file": "schemas.py",
+    "rel_path": "server/schemas.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "class",
+    "name": "EmbedRequest",
+    "qualified_name": "schemas.EmbedRequest",
+    "start_line": 3,
+    "end_line": 7,
+    "docstring": "",
+    "code": "class EmbedRequest(BaseModel):\n    folder_path: str\n    model_name: str = \"all-MiniLM-L6-v2\"\n    output_dir: str = \"faiss_index\"\n    data_dir: str = \"data\""
+  },
+  {
+    "file": "schemas.py",
+    "rel_path": "server/schemas.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "class",
+    "name": "AskRequest",
+    "qualified_name": "schemas.AskRequest",
+    "start_line": 9,
+    "end_line": 10,
+    "docstring": "",
+    "code": "class AskRequest(BaseModel):\n    question: str"
+  }
+]

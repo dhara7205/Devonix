@@ -1,0 +1,28 @@
+[
+  {
+    "file": "main.py",
+    "rel_path": "cli/main.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "run_embedding_pipeline",
+    "qualified_name": "main.run_embedding_pipeline",
+    "start_line": 13,
+    "end_line": 38,
+    "docstring": "",
+    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\"):\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )"
+  },
+  {
+    "file": "main.py",
+    "rel_path": "cli/main.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "main",
+    "qualified_name": "main.main",
+    "start_line": 40,
+    "end_line": 56,
+    "docstring": "",
+    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n\n    args = parser.parse_args()\n\n    if args.embed:\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir\n        )"
+  }
+]

@@ -7,3 +7,7 @@
 - `embeddings/`: Handles embedding generation (coming soon)
 - `server/`: API for RAG-based querying
 - `data/`: Stores parsed JSON chunks
+
+
+
+uvicorn server.main:app --reload --port 8000
