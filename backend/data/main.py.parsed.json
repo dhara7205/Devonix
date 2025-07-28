@@ -1,7 +1,7 @@
 [
   {
     "file": "main.py",
-    "rel_path": "cli/main.py",
+    "rel_path": "backend/cli/main.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -14,7 +14,7 @@
   },
   {
     "file": "main.py",
-    "rel_path": "cli/main.py",
+    "rel_path": "backend/cli/main.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
