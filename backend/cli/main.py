@@ -3,14 +3,19 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import argparse
-from indexer.scanner import scan_codebase
-from indexer.parser import parse_python_file, save_chunks_to_json
-from embeddings.export_embeddings import generate_and_save_embeddings
+
 from logger.log_config import setup_logger
+
+# ⬇️ Import LicenseManager
+from license.license_manager import LicenseManager
 
 logger = setup_logger("cli")
 
+
 def run_embedding_pipeline(root_dir, model_name="all-MiniLM-L6-v2", output_dir="faiss_index", data_dir="data"):
+    from indexer.scanner import scan_codebase
+    from indexer.parser import parse_python_file, save_chunks_to_json
+    from embeddings.export_embeddings import generate_and_save_embeddings
     logger.info(f"📂 Scanning codebase under: {root_dir}")
 
     # Step 1: Recursively collect relevant source files
@@ -37,23 +42,43 @@ def run_embedding_pipeline(root_dir, model_name="all-MiniLM-L6-v2", output_dir="
         model_name=model_name
     )
 
+
 def main():
     parser = argparse.ArgumentParser(description="Codebase Scanner CLI")
-    parser.add_argument("root_dir", type=str, help="Root directory of the codebase to scan (e.g., ./my_project)")
+    parser.add_argument("root_dir", nargs="?", type=str, help="Root directory of the codebase to scan (e.g., ./my_project)")
     parser.add_argument("--embed", action="store_true", help="Generate embeddings and export FAISS index")
     parser.add_argument("--model", type=str, default="all-MiniLM-L6-v2", help="Model name for embeddings")
     parser.add_argument("--output", type=str, default="faiss_index", help="Output path prefix for FAISS index")
     parser.add_argument("--data-dir", type=str, default="data", help="Directory to store parsed chunks")
+    parser.add_argument("--license-info", action="store_true", help="Show license information and exit")
 
     args = parser.parse_args()
 
+    license = LicenseManager()
+
+    if args.license_info:
+        print(license.get_summary())
+        return
+
+    if not license.is_valid():
+        print("🚫 License invalid or expired. Please contact support.")
+        return
+
+    if not license.is_enterprise():
+        print("⚠️ Community plan active — some features may be limited.")
+
     if args.embed:
+        if not args.root_dir:
+            print("❗ Please provide a root directory for embedding.")
+            return
+
         run_embedding_pipeline(
             root_dir=args.root_dir,
             model_name=args.model,
             output_dir=args.output,
             data_dir=args.data_dir
         )
+
 
 if __name__ == "__main__":
     main()

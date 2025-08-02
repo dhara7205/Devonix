@@ -1,7 +1,7 @@
 [
   {
     "file": "parser.py",
-    "rel_path": "backend/indexer/parser.py",
+    "rel_path": "indexer/parser.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -14,7 +14,7 @@
   },
   {
     "file": "parser.py",
-    "rel_path": "backend/indexer/parser.py",
+    "rel_path": "indexer/parser.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",

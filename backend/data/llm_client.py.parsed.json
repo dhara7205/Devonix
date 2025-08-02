@@ -1,7 +1,7 @@
 [
   {
     "file": "llm_client.py",
-    "rel_path": "backend/llm/llm_client.py",
+    "rel_path": "llm/llm_client.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
