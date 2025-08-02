@@ -4,7 +4,7 @@ import QueryForm from './components/QueryForm';
 import ChunkViewer from './components/ChunkViewer';
 
 function App() {
-  const [mode, setMode] = useState(null); // null, 'embed', or 'query'
+  const [mode, setMode] = useState(null); // null, 'embed', 'query'
   const [result, setResult] = useState(null);
 
   const handleBack = () => {
@@ -13,32 +13,32 @@ function App() {
   };
 
   return (
-    <div style={{ padding: '30px', textAlign: 'center' }}>
-      <h1>🧠 CodexPro Interface</h1>
+    <div className="container p-4 text-center">
+      <h1 className="mb-4">🧠 CodexPro Interface</h1>
 
       {mode === null && (
         <>
-          <p>Select an option to get started:</p>
-          <button onClick={() => setMode('embed')} style={{ margin: '10px' }}>Embed Code</button>
-          <button onClick={() => setMode('query')} style={{ margin: '10px' }}>Ask a Question</button>
+          <p className="mb-3">Select an option to get started:</p>
+          <button onClick={() => setMode('embed')} className="me-2">Embed Code</button>
+          <button onClick={() => setMode('query')}>Ask a Question</button>
         </>
       )}
 
       {mode === 'embed' && (
         <>
-          <button onClick={handleBack} style={{ float: 'left' }}>⬅ Back</button>
+          <button onClick={handleBack} className="mb-3 float-start">⬅ Back</button>
           <EmbedForm onSuccess={() => setMode('query')} />
         </>
       )}
 
       {mode === 'query' && (
         <>
-          <button onClick={handleBack} style={{ float: 'left' }}>⬅ Back</button>
+          <button onClick={handleBack} className="mb-3 float-start">⬅ Back</button>
           <QueryForm setResult={setResult} />
           {result && (
-            <div style={{ marginTop: '30px', textAlign: 'left' }}>
-              <h2>💬 Gemini Answer:</h2>
-              <p>{result.answer}</p>
+            <div className="mt-4 text-start">
+              <h2 className="text-info">💬 Gemini Answer:</h2>
+              <pre>{result.answer}</pre>
               {result.length > 0 && <ChunkViewer chunks={result} />}
             </div>
           )}

@@ -31,11 +31,11 @@ export default function QueryForm({ setResult }) {
           onChange={(e) => setQuestion(e.target.value)}
           required
         />
-        <button type="submit">Ask</button>
+        <button type="submit" className="mt-2">Ask</button>
       </form>
 
       {chunks.length > 0 && (
-        <button onClick={() => setShowChunks(!showChunks)} style={{ marginTop: '10px' }}>
+        <button onClick={() => setShowChunks(!showChunks)} className="mt-3">
           {showChunks ? 'Hide Chunks' : 'View Chunks'}
         </button>
       )}

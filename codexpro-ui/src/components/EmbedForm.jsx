@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-export default function EmbedForm({ onSuccess }) {
+export default function EmbedForm() {
   const [folderPath, setFolderPath] = useState('');
 
   const handleSubmit = async (e) => {
@@ -9,7 +9,7 @@ export default function EmbedForm({ onSuccess }) {
     try {
       await axios.post('http://localhost:8000/embed', { folder_path: folderPath });
       alert('✅ Embedding successful');
-      onSuccess();
+      setFolderPath('');
     } catch (err) {
       console.error(err);
       alert('❌ Embedding failed');
@@ -18,7 +18,6 @@ export default function EmbedForm({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>🔍 Embed Codebase</h2>
       <input
         type="text"
         placeholder="Enter folder path"
