@@ -53,3 +53,13 @@ form {
   margin-bottom: 20px;
   text-align: left;
 }
+
+.answer-box {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  padding: 12px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  white-space: pre-wrap;
+  margin-top: 12px;
+}

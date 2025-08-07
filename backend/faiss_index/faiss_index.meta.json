@@ -104,6 +104,97 @@
     "code": "def build_embedding_dataset(chunks, output_path=\"data/embeddings.json\"):\n    embedded_data = []\n    for chunk in chunks:\n        text = chunk.get(\"docstring\", \"\") + \"\\n\" + chunk.get(\"code\", \"\")\n        vector = embed_text(text)\n\n        entry = {\n            \"vector\": vector,\n            **chunk  # include all metadata (rel_path, language, etc.)\n        }\n        embedded_data.append(entry)\n        logger.debug(f\"Embedded: {chunk['qualified_name']}\")\n\n    with open(output_path, \"w\", encoding=\"utf-8\") as f:\n        json.dump(embedded_data, f, indent=2)\n\n    logger.info(f\"Saved {len(embedded_data)} embeddings to {output_path}\")"
   },
   {
+    "file": "license_manager.py",
+    "rel_path": "license/license_manager.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "class",
+    "name": "LicenseManager",
+    "qualified_name": "license_manager.LicenseManager",
+    "start_line": 13,
+    "end_line": 71,
+    "docstring": "",
+    "code": "class LicenseManager:\n    def __init__(self, license_path: str = LICENSE_FILE):\n        self.license_path = license_path\n        self.raw_key = None\n        self.data = None\n        self.valid = False\n\n        self._load_and_verify()\n\n    def _load_and_verify(self):\n        if not os.path.exists(self.license_path):\n            return\n\n        with open(self.license_path, 'r') as f:\n            self.raw_key = f.read().strip()\n\n        if '.' not in self.raw_key:\n            return\n\n        payload_b64, signature = self.raw_key.split('.', 1)\n\n        expected_sig = hmac.new(\n            SECRET_KEY.encode(),\n            payload_b64.encode(),\n            hashlib.sha256\n        ).hexdigest()\n\n        if not hmac.compare_digest(expected_sig, signature):\n            return\n\n        try:\n            payload_json = base64.urlsafe_b64decode(payload_b64.encode()).decode()\n            self.data = json.loads(payload_json)\n\n            # Check expiry\n            expiry_date = datetime.strptime(self.data.get(\"expiry\", \"1970-01-01\"), \"%Y-%m-%d\")\n            self.valid = expiry_date >= datetime.utcnow()\n        except Exception:\n            self.valid = False\n\n    def is_valid(self):\n        return self.valid\n\n    def get_plan(self):\n        return self.data.get(\"plan\", \"community\") if self.valid else None\n\n    def is_enterprise(self):\n        return self.get_plan() == \"enterprise\"\n\n    def get_summary(self):\n        if not self.valid:\n            return \"\u274c Invalid or expired license\"\n        return (\n            f\"\u2705 License Info:\\n\"\n            f\"  Name: {self.data.get('name')}\\n\"\n            f\"  Email: {self.data.get('email')}\\n\"\n            f\"  Plan: {self.data.get('plan')}\\n\"\n            f\"  Expiry: {self.data.get('expiry')}\"\n        )"
+  },
+  {
+    "file": "license_manager.py",
+    "rel_path": "license/license_manager.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "__init__",
+    "qualified_name": "license_manager.__init__",
+    "start_line": 14,
+    "end_line": 20,
+    "docstring": "",
+    "code": "    def __init__(self, license_path: str = LICENSE_FILE):\n        self.license_path = license_path\n        self.raw_key = None\n        self.data = None\n        self.valid = False\n\n        self._load_and_verify()"
+  },
+  {
+    "file": "license_manager.py",
+    "rel_path": "license/license_manager.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "_load_and_verify",
+    "qualified_name": "license_manager._load_and_verify",
+    "start_line": 22,
+    "end_line": 51,
+    "docstring": "",
+    "code": "    def _load_and_verify(self):\n        if not os.path.exists(self.license_path):\n            return\n\n        with open(self.license_path, 'r') as f:\n            self.raw_key = f.read().strip()\n\n        if '.' not in self.raw_key:\n            return\n\n        payload_b64, signature = self.raw_key.split('.', 1)\n\n        expected_sig = hmac.new(\n            SECRET_KEY.encode(),\n            payload_b64.encode(),\n            hashlib.sha256\n        ).hexdigest()\n\n        if not hmac.compare_digest(expected_sig, signature):\n            return\n\n        try:\n            payload_json = base64.urlsafe_b64decode(payload_b64.encode()).decode()\n            self.data = json.loads(payload_json)\n\n            # Check expiry\n            expiry_date = datetime.strptime(self.data.get(\"expiry\", \"1970-01-01\"), \"%Y-%m-%d\")\n            self.valid = expiry_date >= datetime.utcnow()\n        except Exception:\n            self.valid = False"
+  },
+  {
+    "file": "license_manager.py",
+    "rel_path": "license/license_manager.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "is_valid",
+    "qualified_name": "license_manager.is_valid",
+    "start_line": 53,
+    "end_line": 54,
+    "docstring": "",
+    "code": "    def is_valid(self):\n        return self.valid"
+  },
+  {
+    "file": "license_manager.py",
+    "rel_path": "license/license_manager.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "get_plan",
+    "qualified_name": "license_manager.get_plan",
+    "start_line": 56,
+    "end_line": 57,
+    "docstring": "",
+    "code": "    def get_plan(self):\n        return self.data.get(\"plan\", \"community\") if self.valid else None"
+  },
+  {
+    "file": "license_manager.py",
+    "rel_path": "license/license_manager.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "is_enterprise",
+    "qualified_name": "license_manager.is_enterprise",
+    "start_line": 59,
+    "end_line": 60,
+    "docstring": "",
+    "code": "    def is_enterprise(self):\n        return self.get_plan() == \"enterprise\""
+  },
+  {
+    "file": "license_manager.py",
+    "rel_path": "license/license_manager.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "get_summary",
+    "qualified_name": "license_manager.get_summary",
+    "start_line": 62,
+    "end_line": 71,
+    "docstring": "",
+    "code": "    def get_summary(self):\n        if not self.valid:\n            return \"\u274c Invalid or expired license\"\n        return (\n            f\"\u2705 License Info:\\n\"\n            f\"  Name: {self.data.get('name')}\\n\"\n            f\"  Email: {self.data.get('email')}\\n\"\n            f\"  Plan: {self.data.get('plan')}\\n\"\n            f\"  Expiry: {self.data.get('expiry')}\"\n        )"
+  },
+  {
     "file": "llm_client.py",
     "rel_path": "llm/llm_client.py",
     "repo": "codexpro",
@@ -176,10 +267,10 @@
     "type": "function",
     "name": "run_embedding_pipeline",
     "qualified_name": "main.run_embedding_pipeline",
-    "start_line": 13,
-    "end_line": 38,
+    "start_line": 15,
+    "end_line": 43,
     "docstring": "",
-    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\"):\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )"
+    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\"):\n    from indexer.scanner import scan_codebase\n    from indexer.parser import parse_python_file, save_chunks_to_json\n    from embeddings.export_embeddings import generate_and_save_embeddings\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )"
   },
   {
     "file": "main.py",
@@ -189,10 +280,10 @@
     "type": "function",
     "name": "main",
     "qualified_name": "main.main",
-    "start_line": 40,
-    "end_line": 56,
+    "start_line": 46,
+    "end_line": 80,
     "docstring": "",
-    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n\n    args = parser.parse_args()\n\n    if args.embed:\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir\n        )"
+    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", nargs=\"?\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n    parser.add_argument(\"--license-info\", action=\"store_true\", help=\"Show license information and exit\")\n\n    args = parser.parse_args()\n\n    license = LicenseManager()\n\n    if args.license_info:\n        print(license.get_summary())\n        return\n\n    if not license.is_valid():\n        print(\"\ud83d\udeab License invalid or expired. Please contact support.\")\n        return\n\n    if not license.is_enterprise():\n        print(\"\u26a0\ufe0f Community plan active \u2014 some features may be limited.\")\n\n    if args.embed:\n        if not args.root_dir:\n            print(\"\u2757 Please provide a root directory for embedding.\")\n            return\n\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir\n        )"
   },
   {
     "file": "parser.py",

@@ -38,8 +38,15 @@ function App() {
           {result && (
             <div className="mt-4 text-start">
               <h2 className="text-info">💬 Gemini Answer:</h2>
-              <pre>{result.answer}</pre>
-              {result.length > 0 && <ChunkViewer chunks={result} />}
+              <div className="answer-box">
+                {result.answer}
+              </div>
+              {result.length > 0 && (
+                <details className="mt-3">
+                  <summary style={{ cursor: 'pointer' }}>📄 View Chunks</summary>
+                  <ChunkViewer chunks={result} />
+                </details>
+              )}
             </div>
           )}
         </>
