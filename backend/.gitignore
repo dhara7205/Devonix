@@ -1,5 +1,5 @@
 # Ignore .env file
 .env
-
+private_key.pem
 # Ignore logs folder
 logs/
