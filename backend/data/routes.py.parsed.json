@@ -1,27 +1,27 @@
 [
   {
     "file": "routes.py",
-    "rel_path": "server/routes.py",
+    "rel_path": "backend/server/routes.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
     "name": "embed_codebase",
     "qualified_name": "routes.embed_codebase",
-    "start_line": 9,
-    "end_line": 16,
+    "start_line": 10,
+    "end_line": 19,
     "docstring": "",
-    "code": "def embed_codebase(req: EmbedRequest):\n    run_embedding_pipeline(\n        root_dir=req.folder_path,\n        model_name=req.model_name,\n        output_dir=req.output_dir,\n        data_dir=req.data_dir\n    )\n    return {\"status\": \"success\", \"message\": \"Embedding completed\"}"
+    "code": "def embed_codebase(req: EmbedRequest):\n    license = LicenseManager()\n    run_embedding_pipeline(\n        root_dir=req.folder_path,\n        model_name=req.model_name,\n        output_dir=req.output_dir,\n        data_dir=req.data_dir,\n        license=license\n    )\n    return {\"status\": \"success\", \"message\": \"Embedding completed\"}"
   },
   {
     "file": "routes.py",
-    "rel_path": "server/routes.py",
+    "rel_path": "backend/server/routes.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
     "name": "ask_question",
     "qualified_name": "routes.ask_question",
-    "start_line": 19,
-    "end_line": 21,
+    "start_line": 22,
+    "end_line": 24,
     "docstring": "",
     "code": "def ask_question(req: AskRequest):\n    result = run_query_pipeline(req.question)\n    return result"
   }

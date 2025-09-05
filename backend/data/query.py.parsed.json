@@ -1,7 +1,7 @@
 [
   {
     "file": "query.py",
-    "rel_path": "cli/query.py",
+    "rel_path": "backend/cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -14,7 +14,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "cli/query.py",
+    "rel_path": "backend/cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -27,7 +27,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "cli/query.py",
+    "rel_path": "backend/cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -40,7 +40,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "cli/query.py",
+    "rel_path": "backend/cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -53,7 +53,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "cli/query.py",
+    "rel_path": "backend/cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -66,7 +66,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "cli/query.py",
+    "rel_path": "backend/cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",

@@ -1,0 +1,28 @@
+[
+  {
+    "file": "generate_license.py",
+    "rel_path": "internal/generate_license.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "sign_license",
+    "qualified_name": "generate_license.sign_license",
+    "start_line": 9,
+    "end_line": 29,
+    "docstring": "",
+    "code": "def sign_license(data: dict, private_key_path=None):\n    if private_key_path is None:\n        private_key_path = os.path.join(os.path.dirname(__file__), \"private_key.pem\")\n\n    payload_json = json.dumps(data, separators=(',', ':'), sort_keys=True)\n    payload_b64 = base64.urlsafe_b64encode(payload_json.encode()).decode()\n\n    with open(private_key_path, \"rb\") as key_file:\n        private_key = serialization.load_pem_private_key(\n            key_file.read(),\n            password=None,\n        )\n\n    signature = private_key.sign(\n        payload_b64.encode(),\n        padding.PKCS1v15(),\n        hashes.SHA256()\n    )\n\n    signature_b64 = base64.urlsafe_b64encode(signature).decode()\n    return f\"{payload_b64}.{signature_b64}\""
+  },
+  {
+    "file": "generate_license.py",
+    "rel_path": "internal/generate_license.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "main",
+    "qualified_name": "generate_license.main",
+    "start_line": 32,
+    "end_line": 71,
+    "docstring": "",
+    "code": "def main():\n    print(\"\ud83d\udd10 CodexPro RSA License Generator\\n\")\n\n    name = input(\"Enter name: \").strip()\n    email = input(\"Enter email: \").strip()\n\n    while True:\n        plan = input(\"Enter plan (community / enterprise): \").strip().lower()\n        if plan in (\"community\", \"enterprise\"):\n            break\n        print(\"\u274c Invalid plan. Must be 'community' or 'enterprise'.\")\n\n    while True:\n        expiry = input(\"Enter expiry date (YYYY-MM-DD): \").strip()\n        try:\n            datetime.strptime(expiry, \"%Y-%m-%d\")\n            break\n        except ValueError:\n            print(\"\u274c Invalid date format. Try again.\")\n\n    license_data = {\n        \"name\": name,\n        \"email\": email,\n        \"plan\": plan,\n        \"expiry\": expiry\n    }\n\n    license_key = sign_license(license_data)\n\n    # Path for saving the license file\n    license_file = os.path.expanduser(\"~/.codexpro.license\")\n\n    # Write the license key\n    with open(license_file, \"w\") as f:\n        f.write(license_key)\n\n    print(\"\\n\u2705 License generated and saved successfully!\")\n    print(f\"\ud83d\udcc2 Saved to: {license_file}\\n\")\n    print(\"\ud83d\udd11 License Key:\\n\")\n    print(license_key)"
+  }
+]

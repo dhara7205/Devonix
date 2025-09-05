@@ -1,28 +1,28 @@
 [
   {
     "file": "main.py",
-    "rel_path": "cli/main.py",
+    "rel_path": "backend/cli/main.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
     "name": "run_embedding_pipeline",
     "qualified_name": "main.run_embedding_pipeline",
-    "start_line": 15,
-    "end_line": 43,
+    "start_line": 12,
+    "end_line": 53,
     "docstring": "",
-    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\"):\n    from indexer.scanner import scan_codebase\n    from indexer.parser import parse_python_file, save_chunks_to_json\n    from embeddings.export_embeddings import generate_and_save_embeddings\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n\n    # Step 1: Recursively collect relevant source files\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )"
+    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\", license=None):\n    # Lazy load heavy modules\n    from indexer.scanner import scan_codebase\n    from indexer.parser import parse_python_file, save_chunks_to_json\n    from embeddings.export_embeddings import generate_and_save_embeddings\n\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # \ud83d\udccc Enforce file limit for Community plan\n    if not license.is_enterprise():\n        MAX_FILES = 50\n        if len(source_files) > MAX_FILES:\n            logger.warning(f\"\u26a0\ufe0f Community plan limit: processing only first {MAX_FILES} files.\")\n            source_files = source_files[:MAX_FILES]\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n            # \ud83d\udccc Enforce chunk limit for Community plan\n            if not license.is_enterprise() and len(all_chunks) >= 200:\n                logger.warning(\"\u26a0\ufe0f Community plan limit: maximum 200 chunks reached.\")\n                all_chunks = all_chunks[:200]\n                break\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )"
   },
   {
     "file": "main.py",
-    "rel_path": "cli/main.py",
+    "rel_path": "backend/cli/main.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
     "name": "main",
     "qualified_name": "main.main",
-    "start_line": 46,
-    "end_line": 80,
+    "start_line": 56,
+    "end_line": 91,
     "docstring": "",
-    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", nargs=\"?\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n    parser.add_argument(\"--license-info\", action=\"store_true\", help=\"Show license information and exit\")\n\n    args = parser.parse_args()\n\n    license = LicenseManager()\n\n    if args.license_info:\n        print(license.get_summary())\n        return\n\n    if not license.is_valid():\n        print(\"\ud83d\udeab License invalid or expired. Please contact support.\")\n        return\n\n    if not license.is_enterprise():\n        print(\"\u26a0\ufe0f Community plan active \u2014 some features may be limited.\")\n\n    if args.embed:\n        if not args.root_dir:\n            print(\"\u2757 Please provide a root directory for embedding.\")\n            return\n\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir\n        )"
+    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", nargs=\"?\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n    parser.add_argument(\"--license-info\", action=\"store_true\", help=\"Show license information and exit\")\n\n    args = parser.parse_args()\n\n    license = LicenseManager()\n\n    if args.license_info:\n        print(license.get_summary())\n        return\n\n    if not license.is_valid():\n        print(\"\ud83d\udeab License invalid or expired. Please contact support.\")\n        return\n\n    if not license.is_enterprise():\n        print(\"\u26a0\ufe0f Community plan active \u2014 limits apply (max 50 files, 200 chunks).\")\n\n    if args.embed:\n        if not args.root_dir:\n            print(\"\u2757 Please provide a root directory for embedding.\")\n            return\n\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir,\n            license=license\n        )"
   }
 ]
