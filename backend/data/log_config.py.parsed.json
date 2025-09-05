@@ -1,7 +1,7 @@
 [
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -14,7 +14,7 @@
   },
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",
@@ -27,7 +27,7 @@
   },
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -40,7 +40,7 @@
   },
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",

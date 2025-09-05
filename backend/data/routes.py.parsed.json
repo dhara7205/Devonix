@@ -1,7 +1,7 @@
 [
   {
     "file": "routes.py",
-    "rel_path": "backend/server/routes.py",
+    "rel_path": "server/routes.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -14,7 +14,7 @@
   },
   {
     "file": "routes.py",
-    "rel_path": "backend/server/routes.py",
+    "rel_path": "server/routes.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",

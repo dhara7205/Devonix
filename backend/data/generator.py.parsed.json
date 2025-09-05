@@ -1,7 +1,7 @@
 [
   {
     "file": "generator.py",
-    "rel_path": "backend/embeddings/generator.py",
+    "rel_path": "embeddings/generator.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -14,7 +14,7 @@
   },
   {
     "file": "generator.py",
-    "rel_path": "backend/embeddings/generator.py",
+    "rel_path": "embeddings/generator.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -27,7 +27,7 @@
   },
   {
     "file": "generator.py",
-    "rel_path": "backend/embeddings/generator.py",
+    "rel_path": "embeddings/generator.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",

@@ -1,7 +1,7 @@
 [
   {
     "file": "export_embeddings.py",
-    "rel_path": "backend/embeddings/export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -14,7 +14,7 @@
   },
   {
     "file": "export_embeddings.py",
-    "rel_path": "backend/embeddings/export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -27,7 +27,7 @@
   },
   {
     "file": "export_embeddings.py",
-    "rel_path": "backend/embeddings/export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -40,7 +40,7 @@
   },
   {
     "file": "export_embeddings.py",
-    "rel_path": "backend/embeddings/export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -53,7 +53,7 @@
   },
   {
     "file": "export_embeddings.py",
-    "rel_path": "backend/embeddings/export_embeddings.py",
+    "rel_path": "embeddings/export_embeddings.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -92,7 +92,7 @@
   },
   {
     "file": "generator.py",
-    "rel_path": "backend/embeddings/generator.py",
+    "rel_path": "embeddings/generator.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -105,7 +105,7 @@
   },
   {
     "file": "generator.py",
-    "rel_path": "backend/embeddings/generator.py",
+    "rel_path": "embeddings/generator.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -118,7 +118,7 @@
   },
   {
     "file": "generator.py",
-    "rel_path": "backend/embeddings/generator.py",
+    "rel_path": "embeddings/generator.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -131,7 +131,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",
@@ -144,7 +144,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -157,7 +157,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -170,7 +170,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -183,7 +183,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -196,7 +196,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -209,7 +209,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -222,7 +222,7 @@
   },
   {
     "file": "llm_client.py",
-    "rel_path": "backend/llm/llm_client.py",
+    "rel_path": "llm/llm_client.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -235,7 +235,7 @@
   },
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -248,7 +248,7 @@
   },
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",
@@ -261,7 +261,7 @@
   },
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -274,7 +274,7 @@
   },
   {
     "file": "log_config.py",
-    "rel_path": "backend/logger/log_config.py",
+    "rel_path": "logger/log_config.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -287,33 +287,33 @@
   },
   {
     "file": "main.py",
-    "rel_path": "backend/cli/main.py",
+    "rel_path": "cli/main.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
     "name": "run_embedding_pipeline",
     "qualified_name": "main.run_embedding_pipeline",
     "start_line": 12,
-    "end_line": 53,
+    "end_line": 63,
     "docstring": "",
-    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\", license=None):\n    # Lazy load heavy modules\n    from indexer.scanner import scan_codebase\n    from indexer.parser import parse_python_file, save_chunks_to_json\n    from embeddings.export_embeddings import generate_and_save_embeddings\n\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # \ud83d\udccc Enforce file limit for Community plan\n    if not license.is_enterprise():\n        MAX_FILES = 50\n        if len(source_files) > MAX_FILES:\n            logger.warning(f\"\u26a0\ufe0f Community plan limit: processing only first {MAX_FILES} files.\")\n            source_files = source_files[:MAX_FILES]\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n            # \ud83d\udccc Enforce chunk limit for Community plan\n            if not license.is_enterprise() and len(all_chunks) >= 200:\n                logger.warning(\"\u26a0\ufe0f Community plan limit: maximum 200 chunks reached.\")\n                all_chunks = all_chunks[:200]\n                break\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )"
+    "code": "def run_embedding_pipeline(root_dir, model_name=\"all-MiniLM-L6-v2\", output_dir=\"faiss_index\", data_dir=\"data\", license=None):\n    # Lazy load heavy modules\n    from indexer.scanner import scan_codebase\n    from indexer.parser import parse_python_file, save_chunks_to_json\n    from embeddings.export_embeddings import generate_and_save_embeddings\n\n    logger.info(f\"\ud83d\udcc2 Scanning codebase under: {root_dir}\")\n    source_files = scan_codebase(root_dir)\n    logger.info(f\"\u2705 Found {len(source_files)} source files.\")\n\n    # Determine whether we're in enterprise or community mode\n    is_enterprise = license.is_enterprise() if license is not None else False\n\n    # \ud83d\udccc Enforce file limit for Community plan (trim, do not block)\n    if not is_enterprise:\n        MAX_FILES = 50\n        if len(source_files) > MAX_FILES:\n            logger.warning(f\"\u26a0\ufe0f Community plan limit: processing only first {MAX_FILES} files.\")\n            source_files = source_files[:MAX_FILES]\n\n    # Step 2: Parse each Python file\n    all_chunks = []\n    for file_path in source_files:\n        if file_path.endswith(\".py\"):\n            logger.info(f\"\ud83e\udde0 Parsing: {file_path}\")\n            chunks = parse_python_file(file_path, root_dir=root_dir)\n            all_chunks.extend(chunks)\n\n            # \ud83d\udccc Enforce chunk limit for Community plan (trim, do not block)\n            if not is_enterprise and len(all_chunks) >= 200:\n                logger.warning(\"\u26a0\ufe0f Community plan limit: maximum 200 chunks reached.\")\n                all_chunks = all_chunks[:200]\n                break\n\n    # Step 3: Store parsed chunks\n    save_chunks_to_json(all_chunks, output_dir=data_dir)\n    logger.info(f\"\ud83d\udce6 All parsed chunks saved in '{data_dir}/' directory.\")\n\n    # Step 4: Generate embeddings and export FAISS index\n    logger.info(\"\ud83d\udd0e Generating embeddings and exporting FAISS index...\")\n    generate_and_save_embeddings(\n        data_dir=data_dir,\n        output_path=output_dir,\n        model_name=model_name\n    )\n\n    # End-of-run upsell message for community users (console)\n    if not is_enterprise:\n        logger.info(\"\")\n        logger.info(\"\u26a0\ufe0f You are using the Community plan (limited to 50 files and 200 chunks).\")\n        logger.info(\"\ud83d\udca1 Upgrade to Enterprise for unlimited codebase support.\")\n        logger.info(\"\")"
   },
   {
     "file": "main.py",
-    "rel_path": "backend/cli/main.py",
+    "rel_path": "cli/main.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
     "name": "main",
     "qualified_name": "main.main",
-    "start_line": 56,
-    "end_line": 91,
+    "start_line": 66,
+    "end_line": 116,
     "docstring": "",
-    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", nargs=\"?\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n    parser.add_argument(\"--license-info\", action=\"store_true\", help=\"Show license information and exit\")\n\n    args = parser.parse_args()\n\n    license = LicenseManager()\n\n    if args.license_info:\n        print(license.get_summary())\n        return\n\n    if not license.is_valid():\n        print(\"\ud83d\udeab License invalid or expired. Please contact support.\")\n        return\n\n    if not license.is_enterprise():\n        print(\"\u26a0\ufe0f Community plan active \u2014 limits apply (max 50 files, 200 chunks).\")\n\n    if args.embed:\n        if not args.root_dir:\n            print(\"\u2757 Please provide a root directory for embedding.\")\n            return\n\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir,\n            license=license\n        )"
+    "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", nargs=\"?\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n    parser.add_argument(\"--license-info\", action=\"store_true\", help=\"Show license information and exit\")\n\n    args = parser.parse_args()\n\n    # Load license manager (it will attempt to read ~/.codexpro.license and public_key.pem)\n    license = LicenseManager()\n\n    # --license-info: print summary if valid, otherwise state community mode\n    if args.license_info:\n        summary = license.get_summary() if license.is_valid() else None\n        if summary:\n            print(summary)\n        else:\n            print(\"\u2139\ufe0f No valid license found. Running in Community mode (limits apply).\")\n        return\n\n    # If license is missing/invalid, do NOT block \u2014 treat as community mode.\n    if not license.is_valid():\n        # Only show a single friendly warning (don't spam)\n        logger.warning(\"\u26a0\ufe0f No valid license detected. Running in Community mode (limited to 50 files, 200 chunks).\")\n        logger.warning(\"If you have a license, place it at ~/.codexpro.license or check that public_key.pem exists in backend/license/\")\n\n    # If license exists and is enterprise, inform the user (no limits)\n    if license.is_valid() and license.is_enterprise():\n        logger.info(\"\u2705 Enterprise license detected \u2014 running with full capabilities.\")\n    else:\n        # Either a valid community license, or no/invalid license -> community mode\n        if license.is_valid():\n            logger.info(\"\u2705 Community license detected \u2014 running with community limits.\")\n        # else: already warned above\n\n    # Run embedding pipeline if requested\n    if args.embed:\n        if not args.root_dir:\n            print(\"\u2757 Please provide a root directory for embedding.\")\n            return\n\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir,\n            license=license\n        )"
   },
   {
     "file": "parser.py",
-    "rel_path": "backend/indexer/parser.py",
+    "rel_path": "indexer/parser.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -326,7 +326,7 @@
   },
   {
     "file": "parser.py",
-    "rel_path": "backend/indexer/parser.py",
+    "rel_path": "indexer/parser.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -339,7 +339,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "backend/cli/query.py",
+    "rel_path": "cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -352,7 +352,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "backend/cli/query.py",
+    "rel_path": "cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -365,7 +365,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "backend/cli/query.py",
+    "rel_path": "cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -378,7 +378,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "backend/cli/query.py",
+    "rel_path": "cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -391,7 +391,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "backend/cli/query.py",
+    "rel_path": "cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -404,7 +404,7 @@
   },
   {
     "file": "query.py",
-    "rel_path": "backend/cli/query.py",
+    "rel_path": "cli/query.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -417,7 +417,7 @@
   },
   {
     "file": "routes.py",
-    "rel_path": "backend/server/routes.py",
+    "rel_path": "server/routes.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -430,7 +430,7 @@
   },
   {
     "file": "routes.py",
-    "rel_path": "backend/server/routes.py",
+    "rel_path": "server/routes.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -443,7 +443,7 @@
   },
   {
     "file": "scanner.py",
-    "rel_path": "backend/indexer/scanner.py",
+    "rel_path": "indexer/scanner.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -456,7 +456,7 @@
   },
   {
     "file": "scanner.py",
-    "rel_path": "backend/indexer/scanner.py",
+    "rel_path": "indexer/scanner.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -469,7 +469,7 @@
   },
   {
     "file": "scanner.py",
-    "rel_path": "backend/indexer/scanner.py",
+    "rel_path": "indexer/scanner.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -482,7 +482,7 @@
   },
   {
     "file": "schemas.py",
-    "rel_path": "backend/server/schemas.py",
+    "rel_path": "server/schemas.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",
@@ -495,7 +495,7 @@
   },
   {
     "file": "schemas.py",
-    "rel_path": "backend/server/schemas.py",
+    "rel_path": "server/schemas.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",

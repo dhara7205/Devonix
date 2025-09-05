@@ -1,7 +1,7 @@
 [
   {
     "file": "schemas.py",
-    "rel_path": "backend/server/schemas.py",
+    "rel_path": "server/schemas.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",
@@ -14,7 +14,7 @@
   },
   {
     "file": "schemas.py",
-    "rel_path": "backend/server/schemas.py",
+    "rel_path": "server/schemas.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",

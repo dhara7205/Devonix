@@ -1,7 +1,7 @@
 [
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "class",
@@ -14,7 +14,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -27,7 +27,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -40,7 +40,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -53,7 +53,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -66,7 +66,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
@@ -79,7 +79,7 @@
   },
   {
     "file": "license_manager.py",
-    "rel_path": "backend/license/license_manager.py",
+    "rel_path": "license/license_manager.py",
     "repo": "codexpro",
     "language": "python",
     "type": "function",
