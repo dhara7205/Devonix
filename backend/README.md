@@ -11,3 +11,4 @@
 
 
 uvicorn server.main:app --reload --port 8000
+https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={API_KEY}
