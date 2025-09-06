@@ -1,0 +1,320 @@
+/* Palette */
+:root{
+  --emerald: #10B981;
+  --slate: #374151;
+  --jet: #000000;        /* exact Jet Black */
+  --offwhite: #F3F4F6;
+  --accent: #F97316;
+  --muted: rgba(243,244,246,0.7);
+}
+
+/* Reset-ish */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  background-color: var(--jet);
+  color: var(--offwhite);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.4;
+}
+
+/* Layout containers */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Header / Navbar */
+.header {
+  width: 100%;
+  background: var(--jet);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+/* Brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--offwhite);
+}
+.brand .title {
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  font-size: 28px;
+}
+
+/* Logo sizing */
+.brand img {
+  height: 56px; /* adjust */
+  width: auto;
+  display: block;
+}
+
+/* Desktop nav */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav .nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--offwhite);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.nav .nav-btn:hover,
+.nav .nav-btn:focus {
+  background: rgba(255,255,255,0.03);
+  outline: none;
+}
+.btn-primary {
+  background: var(--emerald);
+  color: var(--jet);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary:hover { filter: brightness(0.95); }
+
+/* Mobile: hamburger & mobile menu */
+.hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--offwhite);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+}
+.mobile-menu {
+  display: none;
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+/* Main content */
+.main {
+  padding: 28px 0;
+  min-height: calc(100vh - 72px);
+}
+.card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid var(--emerald);
+}
+
+.brand img {
+  height: 150px; /* or 120px if you want it really prominent */
+  width: auto;
+  padding-top: 30px;
+  padding-bottom: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav { display: none; }
+  .hamburger { display: inline-flex; }
+  .mobile-menu { display: block; }
+  .mobile-menu .nav-row { display: flex; flex-direction: column; gap: 6px; padding: 12px; }
+  .brand .title { display: none; }
+}
+
+/* Processing overlay (full-screen centered) */
+.processing-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2,6,23,0.6);
+  z-index: 2000;
+}
+.processing-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Blinking logo animation */
+.processing-logo {
+  height: 96px;
+  width: auto;
+  animation: blink 900ms infinite;
+  will-change: opacity, transform;
+}
+@keyframes blink {
+  0%   { opacity: 1; transform: scale(1); filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6)); }
+  50%  { opacity: 0.25; transform: scale(0.94); filter: none; }
+  100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6)); }
+}
+
+/* Popup (DonePopup) styles — paste near your other modal styles */
+.popup-backdrop {
+  position: fixed;
+  inset: 0;                          /* top/right/bottom/left: 0 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2,6,23,0.55);     /* semi-opaque dark backdrop */
+  z-index: 4000;                      /* above page + processing overlay */
+  padding: 20px;                      /* small padding for mobile */
+}
+
+.popup {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--offwhite);
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 520px;                  /* modal width */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  transform-origin: center;
+}
+
+/* Heading / body spacing inside popup */
+.popup h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+.popup p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Footer button row alignment */
+.popup .footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Ensure popup buttons look consistent */
+.popup .nav-btn, .popup .btn-primary {
+  min-width: 88px;
+}
+
+/* Accessibility: trap focus visually (optional) */
+.popup-backdrop:focus { outline: none; }
+
+/* Small-screen tweaks */
+@media (max-width: 480px) {
+  .popup { max-width: 95%; padding: 16px; }
+  .popup h3 { font-size: 16px; }
+}
+
+/* Floating "View Chunks" button bottom-right */
+.view-chunks-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1200;
+  background: rgba(255,255,255,0.03);
+  color: var(--offwhite);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.view-chunks-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Feedback (thumb) button */
+.feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--offwhite);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.feedback-btn:hover { background:  rgba(16,185,129); }
+
+/* Reuse modal styles you already have (.modal-backdrop, .modal-card) */
+/* If you used the modal styles earlier, you can skip — else add minimal rules: */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2,6,23,0.5);
+  z-index: 2000;
+}
+.modal-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 18px;
+  border-radius: 10px;
+  min-width: 320px;
+  max-width: 880px;
+  color: var(--offwhite);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* Chunk card base */
+.chunk-card {
+  background: #000000;  /* jet black */
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Hover emerald */
+.chunk-card:hover {
+  border-color: rgba(16,185,129);
+  box-shadow: 0 0 12px rgba(16,185,129,0.4);
+}
+
+/* Copy button */
+.copy-btn {
+  background: var(--primary-emerald);
+  color: var(--neutral-jet);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 700;
+  min-width: 72px;
+}
+
+.copy-btn:hover {
+  background: #0ea36d; /* darker emerald */
+}
