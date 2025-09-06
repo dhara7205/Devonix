@@ -5,11 +5,24 @@
     "repo": "codexpro",
     "language": "python",
     "type": "function",
+    "name": "_load_config",
+    "qualified_name": "llm_client._load_config",
+    "start_line": 8,
+    "end_line": 16,
+    "docstring": "",
+    "code": "def _load_config():\n    if not os.path.exists(CONFIG_FILE):\n        raise ValueError(\"\u274c LLM config not set. Please call /qa/config first.\")\n    with open(CONFIG_FILE, \"r\", encoding=\"utf-8\") as f:\n        cfg = json.load(f)\n    api_key = cfg.get(\"api_key\")\n    if not api_key:\n        raise ValueError(\"\u274c API key missing in config. Please set via /qa/config.\")\n    return api_key"
+  },
+  {
+    "file": "llm_client.py",
+    "rel_path": "llm/llm_client.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
     "name": "get_answer",
     "qualified_name": "llm_client.get_answer",
     "start_line": 18,
-    "end_line": 46,
-    "docstring": "Sends a prompt to Gemini 2.5 Pro and returns the model's text response.",
-    "code": "def get_answer(prompt: str) -> str:\n    \"\"\"\n    Sends a prompt to Gemini 2.5 Pro and returns the model's text response.\n    \"\"\"\n    system_instruction = \"You are a code expert. Answer the question accurately based on the given code context.\"\n\n    payload = {\n        \"contents\": [\n            {\n                \"parts\": [\n                    {\n                        \"text\": f\"{system_instruction}\\n\\n{prompt}\"\n                    }\n                ]\n            }\n        ]\n    }\n\n    try:\n        response = requests.post(API_URL, headers={\"Content-Type\": \"application/json\"}, json=payload)\n        response.raise_for_status()\n\n        data = response.json()\n        return data[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"].strip()\n\n    except requests.exceptions.RequestException as e:\n        return f\"\u274c Request error: {e}\"\n    except KeyError:\n        return f\"\u274c Unexpected response: {response.text}\""
+    "end_line": 41,
+    "docstring": "Sends a prompt to Gemini 1.5 Flash and returns the model's text response.",
+    "code": "def get_answer(prompt: str) -> str:\n    \"\"\"\n    Sends a prompt to Gemini 1.5 Flash and returns the model's text response.\n    \"\"\"\n    api_key = _load_config()\n    api_url = f\"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}\"\n\n    system_instruction = \"You are a code expert. Answer the question accurately based on the given code context.\"\n\n    payload = {\n        \"contents\": [\n            {\"parts\": [{\"text\": f\"{system_instruction}\\n\\n{prompt}\"}]}\n        ]\n    }\n\n    try:\n        response = requests.post(api_url, headers={\"Content-Type\": \"application/json\"}, json=payload)\n        response.raise_for_status()\n        data = response.json()\n        return data[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"].strip()\n    except requests.exceptions.RequestException as e:\n        return f\"\u274c Request error: {e}\"\n    except KeyError:\n        return f\"\u274c Unexpected response: {response.text}\""
   }
 ]
