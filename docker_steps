@@ -1,0 +1,126 @@
+Nice — here’s a ready-to-drop **README snippet** for `backend/README.md` that you can commit straight into the repo. It’s short, step-by-step, and designed so any Devonix developer can get the local DB + migrations running in minutes.
+
+Paste this into `backend/README.md` (or append it).
+
+---
+
+# Local development — Postgres & migrations
+
+Quick setup so every developer has the same local Postgres and can run DB migrations.
+
+## Prerequisites
+
+* Docker Desktop installed and running.
+* Node.js (v16+ recommended) and npm installed.
+* (Optional) `psql` client if you prefer running SQL directly from host.
+
+## Files in repo (what should exist)
+
+* `backend/docker-compose.yml` — starts local Postgres (`dev-postgres`).
+* `backend/.env.example` — example env values for dev.
+* `backend/migrations/0001_create_auth_tables.sql` — SQL migrations.
+* `backend/db/index.js` and `backend/db/test_db.js` — DB connector + test script.
+* `backend/package.json` — contains helpful npm scripts (see below).
+
+---
+
+## 1) One-time setup (per machine)
+
+From the `backend/` folder:
+
+```bash
+# copy example env to real env
+cp .env.example .env
+
+# install dependencies
+npm install
+```
+
+Edit `.env` if you want different credentials (defaults must match docker-compose).
+
+---
+
+## 2) Start local Postgres (one command)
+
+From `backend/`:
+
+```bash
+# starts a Postgres 15 container named dev-postgres
+docker compose up -d
+```
+
+Stop it when done:
+
+```bash
+docker compose down
+```
+
+---
+
+## 3) Run DB migrations
+
+Run the SQL migration files (creates `users` and `refresh_tokens`):
+
+```bash
+# from backend/
+npm run db:migrate
+```
+
+(Alternatively, if you have `psql` locally: `psql "$DATABASE_URL" -f backend/migrations/0001_create_auth_tables.sql`)
+
+---
+
+## 4) Verify DB connectivity & test data
+
+Run the Node DB test script:
+
+```bash
+npm run db:test
+```
+
+Expected: it prints rows from the `users` table (or an empty array if no rows exist).
+
+You can also open an interactive `psql` prompt inside the container:
+
+```bash
+docker exec -it dev-postgres psql -U devuser -d devdb
+# inside psql:
+\dt       -- list tables
+SELECT * FROM users LIMIT 5;
+\q
+```
+
+---
+
+## Helpful npm scripts (in `backend/package.json`)
+
+Use these from `backend/`:
+
+```json
+"scripts": {
+  "db:up": "docker compose up -d",
+  "db:down": "docker compose down",
+  "db:migrate": "docker exec -i dev-postgres psql -U devuser -d devdb < backend/migrations/0001_create_auth_tables.sql",
+  "db:test": "node db/test_db.js"
+}
+```
+
+---
+
+## Troubleshooting
+
+* `docker compose up` fails: ensure Docker Desktop is running and you have enough disk/CPU.
+* `npm run db:migrate` fails with connection error: confirm the container is running (`docker ps`) and `.env` `DATABASE_URL` matches the docker-compose credentials.
+* If ports conflict (5432 already in use), change the port mapping in `docker-compose.yml` and update `.env`.
+* If psql reports "permission denied" or similar, confirm the DB user/password in `.env` equal the ones in `docker-compose.yml`.
+
+---
+
+## Notes & next steps
+
+* This local setup is for development only. For staging/production, we use a managed Postgres and store credentials in a secrets manager; migrations run in CI.
+* If you prefer, we can replace the raw SQL migration files with a migration tool (knex/node-pg-migrate) — useful as migrations grow.
+
+---
+
+Want me to commit this `backend/README.md` content for you (I can produce a ready `git` patch) or do you want to paste it yourself?

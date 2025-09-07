@@ -50,7 +50,7 @@ export default function Settings() {
     (async () => {
       setLoadingLoad(true);
       try {
-        const { data } = await axios.get("http://localhost:8000/qa/config", { timeout: 8000 });
+        const { data } = await axios.get("http://localhost:8000/qa/config", { withCredentials: true },{ timeout: 8000 });
         if (data && typeof data === "object") {
           const vals = {
             api_endpoint: data.api_endpoint ?? "",
@@ -112,47 +112,60 @@ export default function Settings() {
   };
 
   const handleSaveToServer = async () => {
-    // basic checks
-    const api_key = (draft.api_key || "").trim();
-    const api_endpoint = (draft.api_endpoint || "").trim();
-    const store_dir = (draft.store_dir || "").trim();
+  // basic checks
+  const api_key = (draft.api_key || "").trim();
+  const api_endpoint = (draft.api_endpoint || "").trim();
+  const store_dir = (draft.store_dir || "").trim();
 
-    if (!api_key) return showToast("error", "API key is required.");
-    if (!api_endpoint || !(api_endpoint.startsWith("http://") || api_endpoint.startsWith("https://"))) {
-      return showToast("error", "API endpoint must start with http:// or https://");
-    }
-    if (!store_dir) return showToast("error", "Storage directory is required.");
+  if (!api_key) return showToast("error", "API key is required.");
+  if (!api_endpoint || !(api_endpoint.startsWith("http://") || api_endpoint.startsWith("https://"))) {
+    return showToast("error", "API endpoint must start with http:// or https://");
+  }
+  if (!store_dir) return showToast("error", "Storage directory is required.");
 
-    setLoading(true);
-    try {
-      const payload = {
-        api_key,
-        api_endpoint,
-        store_dir
-      };
-      const { data } = await axios.post("http://localhost:8000/qa/config", payload, { timeout: 20000 });
-      if (data && data.status === "success") {
-        showToast("success", "Saved on server.");
-      } else {
-        showToast("success", data?.message || "Saved (server responded).");
-      }
-      // update local serverValues and end editing
-      const newVals = { api_endpoint, api_key, store_dir };
-      setServerValues(newVals);
-      setDraft(newVals);
-      setEditing(false);
-      setServerCfgExists(true);
-      try { localStorage.setItem(LS_KEY, JSON.stringify(newVals)); } catch (e) {}
-    } catch (err) {
-      let msg = "Save failed.";
-      if (err.response && err.response.data) msg = err.response.data.detail || JSON.stringify(err.response.data);
-      else if (err.message) msg = err.message;
-      console.error("Save error:", err);
-      showToast("error", msg);
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    const payload = { api_key, api_endpoint, store_dir };
+
+    // correct axios.post signature: (url, data, config)
+    const { data } = await axios.post(
+      "http://localhost:8000/qa/config",
+      payload,
+      { timeout: 20000, withCredentials: true }
+    );
+
+    if (data && data.status === "success") {
+      showToast("success", "Saved on server.");
+    } else {
+      showToast("success", data?.message || "Saved (server responded).");
     }
-  };
+
+    // update local serverValues and end editing
+    const newVals = { api_endpoint, api_key, store_dir };
+    setServerValues(newVals);
+    setDraft(newVals);
+    setEditing(false);
+    setServerCfgExists(true);
+    try { localStorage.setItem(LS_KEY, JSON.stringify(newVals)); } catch (e) {}
+  } catch (err) {
+    console.error("Save error (full):", err);
+    let msg = "Save failed.";
+    if (err.response) {
+      // server responded with status (likely 422). Show server message if present
+      console.error("Server response data:", err.response.data);
+      const serverMsg = err.response.data?.detail || err.response.data || err.response.statusText;
+      msg = typeof serverMsg === "string" ? serverMsg : JSON.stringify(serverMsg);
+    } else if (err.request) {
+      msg = "No response from server (check backend).";
+    } else {
+      msg = err.message;
+    }
+    showToast("error", msg);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleSaveLocalOnly = () => {
     try {

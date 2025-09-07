@@ -1,9 +1,11 @@
 // src/components/Header.jsx
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../auth/AuthContext";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const navItems = [
     { to: "/embed", label: "Embed" },
@@ -11,16 +13,13 @@ export default function Header() {
     { to: "/settings", label: "Settings" },
   ];
 
-  // helper to close mobile menu when navigating
   const handleNavClick = () => setOpen(false);
 
   return (
     <header className="header" role="banner">
       <div className="container header-inner">
         <Link to="/" className="brand" aria-label="Devonix home" onClick={handleNavClick}>
-          {/* white-on-transparent logo for dark header */}
           <img src="/assets/logo-dark.svg" alt="Devonix" />
-          {/* <span className="title">Devonix</span> */}
         </Link>
 
         <nav className="nav" aria-label="Main navigation">
@@ -38,9 +37,16 @@ export default function Header() {
             </NavLink>
           ))}
 
-          <Link to="/login" className="btn-primary login-link" onClick={handleNavClick}>
-            Log in
-          </Link>
+          {user ? (
+            // show small user pill when logged in
+            <Link to="/profile" className="btn-primary login-link" onClick={handleNavClick}>
+              {user.display_name || user.email}
+            </Link>
+          ) : (
+            <Link to="/login" className="btn-primary login-link" onClick={handleNavClick}>
+              Log in
+            </Link>
+          )}
         </nav>
 
         <button
@@ -61,7 +67,6 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="mobile-menu" role="menu" aria-label="Mobile navigation">
           <div className="container nav-row">
@@ -77,9 +82,15 @@ export default function Header() {
                 {n.label}
               </NavLink>
             ))}
-            <Link to="/login" className="btn-primary login-link" onClick={handleNavClick}>
-              Log in
-            </Link>
+            {user ? (
+              <Link to="/profile" className="btn-primary login-link" onClick={handleNavClick}>
+                {user.display_name || user.email}
+              </Link>
+            ) : (
+              <Link to="/login" className="btn-primary login-link" onClick={handleNavClick}>
+                Log in
+              </Link>
+            )}
           </div>
         </div>
       )}
