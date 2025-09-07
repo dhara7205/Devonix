@@ -1,0 +1,41 @@
+name: Run DB Migrations
+
+on:
+  workflow_dispatch:   # run manually from Actions UI
+  push:
+    branches:
+      - main           # optionally run on push to main
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.MIGRATION_DATABASE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install psql (postgres client)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Verify DATABASE_URL is present
+        run: |
+          if [ -z "${DATABASE_URL}" ]; then
+            echo "MIGRATION_DATABASE_URL secret is not set"; exit 1
+          fi
+          echo "Using DATABASE_URL: ${DATABASE_URL}"
+
+      - name: Run SQL migrations (alphabetical)
+        # This runs each .sql file in backend/migrations in sorted order.
+        run: |
+          set -euo pipefail
+          MIGRATIONS_DIR="backend/migrations"
+          if [ ! -d "$MIGRATIONS_DIR" ]; then
+            echo "Migrations dir not found: $MIGRATIONS_DIR"; exit 1
+          fi
+          for f in $(ls "$MIGRATIONS_DIR"/*.sql 2>/dev/null | sort); do
+            echo "Running migration: $f"
+            psql "${DATABASE_URL}" -v ON_ERROR_STOP=1 -f "$f"
+          done

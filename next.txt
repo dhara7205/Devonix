@@ -1,189 +1,431 @@
-Got it — let's focus strictly on **what we planned *after* implementing licensing** for CodexPro. Based on our previous discussions, here’s a refined list that picks up **right after the `.LIC` license generator** was built:
+Perfect 👍 Let’s map this as a **security roadmap for Devonix**, tiered by stage.
+This way, you don’t over-invest too early but still stay enterprise-ready.
 
 ---
 
-## ✅ **Post-Licensing Plans for CodexPro**
-
-### 1. 🛡️ **License Enforcement at Runtime**
-
-* **Validate `.LIC` file** on backend startup.
-* If license is:
-
-  * ✅ Valid → continue loading the app.
-  * ❌ Invalid/expired → block access or redirect to license activation UI.
-* Place this check in a centralized module (`internal/license_checker.py`) and call it during server boot.
+# 🛠️ Devonix Security Roadmap
 
 ---
 
-### 2. 🏢 **Enterprise Packaging**
+## **Stage 1 – MVP / Pilot (Small Clients, Early Adopters)**
 
-* **Two Editions**:
+🎯 Goal: Ship fast, block obvious abuse, and build trust.
 
-  * `Community Edition` (open-source, limited features)
-  * `Enterprise Edition` (packaged for clients)
-* Enterprise includes:
+**Must-haves:**
 
-  * Licensing logic
-  * Role-based access
-  * Audit logs
-  * On-prem setup scripts
+* **Licensing**
 
----
+  * License file with signed metadata (`plan`, `expiry`, `max_users`).
+  * Local enforcement of user cap.
+* **Authentication**
 
-### 3. 🔐 **Authentication and Role-Based Access Control**
+  * Basic login with password hashing (bcrypt/argon2).
+  * JWT sessions with short expiry.
+* **Data Security**
 
-* Integrate basic login system (JWT-based).
-* Add user roles:
+  * Process data fully on-prem, never leave company’s environment.
+  * Encrypt stored data (at least AES for DB/files).
+* **Deployment**
 
-  * `admin`: manage users, view logs
-  * `user`: embed/query code
-* Optional: support **LDAP/SAML** for enterprise clients.
+  * Bind APIs to localhost by default, let admins configure exposure.
+  * Basic RBAC (admin vs. normal user).
+* **Software Security**
 
----
+  * Keep dependencies updated.
+  * Sanitize all inputs (avoid injection).
 
-### 4. 📦 **On-Prem Installability**
-
-* Create a `docker-compose.yml` with:
-
-  * FastAPI backend
-  * React frontend
-  * Postgres + pgvector (or FAISS)
-* Add **initialization script** for setting up license, DB, and admin user.
+👉 At this stage, **don’t over-engineer**, but document clearly: *“Devonix does not transmit customer data outside their environment.”* That alone is a huge selling point.
 
 ---
 
-### 5. 📈 **Analytics & Usage Logs (Enterprise)**
+## **Stage 2 – Mid-size Companies (20–200 users)**
 
-* Log:
+🎯 Goal: Prove security maturity, prevent license abuse, survive audits from IT/security teams.
 
-  * Embedded files
-  * Queries made
-  * Chunks returned
-* Store securely in PostgreSQL for internal usage insights.
+**Additions on top of Stage 1:**
 
----
+* **Licensing**
 
-### 6. 📂 **Import/Export Project Support**
+  * Periodic “phone-home” license validation (configurable; with grace period for offline).
+  * Domain restriction (e.g., only `@company.com` accounts allowed).
+* **Authentication**
 
-* Allow:
+  * SSO integration (SAML/OIDC/LDAP).
+  * MFA support for admin accounts.
+* **Data Security**
 
-  * Exporting embedded project metadata (.zip/.json)
-  * Importing previously exported files
-* Useful for teams sharing codebases.
+  * Scrub logs (no PII, no secrets).
+  * Store credentials/API keys in secure vault (HashiCorp Vault or OS keyring).
+* **Deployment**
 
----
+  * Hardened API: TLS, rate limiting, security headers.
+  * Clear separation of user/admin roles.
+* **Compliance**
 
-### 7. 🤖 **LLM Model Abstraction Layer**
+  * Start audit logging (who did what, when).
+  * Retention policy (admins can purge history).
+* **Software Security**
 
-* Let users choose backend model:
+  * Add code signing for binaries/containers.
+  * Use Snyk/Dependabot for dependency scanning.
 
-  * Gemini
-  * OpenAI (GPT-4)
-  * Local (e.g. Mistral)
-* Abstracted via config/env or runtime toggle.
+👉 At this point, enterprises will ask:
 
----
+* *“Show me your pen test report.”*
+* *“Do you have a data protection policy?”*
 
-### 8. 📄 **PDF Report Generation (Optional)**
-
-* Allow generating reports of:
-
-  * Query results
-  * Matched chunks
-* Use `html2canvas` + `jsPDF` on frontend.
+This is when you may need to hire an external **penetration testing vendor** to generate a report you can show prospects.
 
 ---
 
-Would you like a current **project roadmap** doc in markdown for this?
+## **Stage 3 – Large Enterprises (200+ users, Fortune 500 style)**
 
+🎯 Goal: Pass enterprise-grade compliance, scale securely, prevent piracy.
 
-Perfect — here’s how we can extend the **CodexPro technical roadmap** to include **user feedback collection** via thumbs up/down, which will support future **model fine-tuning or RAG improvements**.
+**Additions on top of Stage 2:**
 
----
+* **Licensing**
 
-## 👍👎 **User Feedback for Response Quality**
+  * Bind license to company legal entity (name, domain).
+  * Telemetry/usage reporting (with opt-in, anonymized).
+  * Concurrent session limits to prevent abuse.
+* **Authentication**
 
-### ✅ Planned Feature: Feedback Buttons
+  * Full SSO/SAML/LDAP federation support.
+  * Fine-grained RBAC (roles, groups, permissions).
+* **Data Security**
 
-Add **“Was this helpful?”** UI right after the LLM response:
+  * End-to-end encryption (data at rest + in transit).
+  * Optional key management integration (KMS/HSM).
+* **Deployment**
 
-```jsx
-<p className="mt-2">Was this helpful?</p>
-<button onClick={() => sendFeedback(true)}>👍</button>
-<button onClick={() => sendFeedback(false)} className="ms-2">👎</button>
-```
+  * Hardened installer (with signed packages).
+  * Security benchmarks (CIS Docker/K8s hardening).
+* **Compliance**
 
----
+  * SOC2 / ISO 27001 readiness.
+  * GDPR/CCPA policies for any personal data.
+  * Exportable compliance reports for IT auditors.
+* **Software Security**
 
-### 📤 `sendFeedback()` function
+  * Annual independent **security audits**.
+  * Bug bounty / responsible disclosure program.
 
-Sends feedback to the backend with:
+👉 At this stage, you **must** work with external cybersecurity consultancies for:
 
-* Query
-* Answer
-* Chunks used
-* `helpful: true/false`
-* Timestamp
-* User info (if available)
-
-```js
-function sendFeedback(helpful) {
-  fetch('http://localhost:8000/feedback', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      helpful,
-      query: result.query,
-      answer: result.answer,
-      chunks: result,
-      timestamp: new Date().toISOString()
-    })
-  });
-}
-```
+* **Penetration testing** (required by big clients).
+* **Compliance certifications** (SOC2, ISO 27001, etc.).
 
 ---
 
-### 🧠 Future Use of Feedback
+# ✅ Quick Takeaway
 
-Collected feedback will be used for:
-
-* 📊 **Analytics**: how helpful the model is over time
-* 🧪 **Fine-tuning** or RAG ranking improvements:
-
-  * Learn which chunks correlate with good answers
-  * Improve chunk scoring/similarity models
-* 🧵 Optional: train a binary classifier to predict helpfulness
+* **Stage 1 (MVP)** → Build in-house, lightweight, minimal protections.
+* **Stage 2 (Mid-size)** → Add SSO, audit logs, secure vaults, and bring in external pen testers.
+* **Stage 3 (Large enterprise)** → Full compliance (SOC2/ISO), yearly security audits, possibly partner with a cybersecurity company.
 
 ---
 
-### 🗃️ Backend Plan (`/feedback` endpoint)
+Would you like me to create a **visual table/roadmap (Stage vs. Security Features)** that you can also reuse in your pitch deck for investors/clients? It’ll make you look prepared for scale.
 
-In `FastAPI`:
 
-```python
-@app.post("/feedback")
-async def collect_feedback(feedback: FeedbackModel):
-    save_to_db_or_file(feedback.dict())
-    return {"status": "received"}
-```
+6) Security & privacy checklist before shipping EXE (Stage 1 focused but solid)
+
+Sign all installers and binaries.
+
+Use TLS for any network communication; verify server certificates.
+
+Sign license files and validate signature in-app.
+
+Keep data processing local by default; never send raw customer code offsite.
+
+Store license file and user registry encrypted; use OS secure stores where possible.
+
+Use OAuth for personal logins and SSO for enterprise.
+
+Provide clear privacy & telemetry consent screens at install time.
+
+Implement short-lived tokens for sessions and refresh tokens stored securely.
+
+Provide admin UI for license status, usage count, last sync, and audit logs.
+
+Prepare an emergency mechanism to revoke licenses server-side and push revocation to installed instances on next sync.
+
+7) When to involve a cybersecurity company
+
+Before major enterprise sales (Stage 2 → mid-size) you should hire a pen-testing vendor to run a security assessment and provide a report to prospects.
+
+For Stage 3 / large enterprise deals you’ll likely need formal SOC2 / ISO 27001 readiness help — bring in a security consultancy or managed provider.
+
+If you plan to implement anti-tamper/obfuscation or DRM that’s hard to get right, talk to specialists.
+
+8) Implementation tradeoffs & recommended policy for Devonix
+
+Default policy: allow offline with a configurable grace period; require periodic phone-home for full enforcement.
+
+SSO-first: implement SSO & LDAP support ASAP — this will unlock most mid/large customers.
+
+Telemetry: collect only minimal data for license enforcement (install_id, hashed license_id, counts, timestamp). Explicit opt-in / clear notice.
+
+Licensing flow: license is issued when purchase completes; admin verifies domain; license file installed; local app enforces cap; server validates periodically.
+
+Tamper detection: focus on signed license files + signed binaries. Obfuscation optional at MVP, add later if you see real attacks.
+
+9) Practical next steps you can do right now (actionable checklist)
+
+Build the login UX:
+
+“Personal” → Google OAuth flow.
+
+“Enterprise” → show options: (a) Configure SSO (recommended) (b) Use local company credentials (only if customer requests).
+
+Design license file format and signing process (fields: company, domains, max_users, expiry, install_id, signature).
+
+Add local user registry: store distinct unique IDs and a count; add local admin UI to view count.
+
+Implement periodic, encrypted reporting to a license server (configurable interval).
+
+Add installer that lets admins upload license file and configure SSO metadata.
+
+Add privacy/telemetry consent screen during install + offline grace configuration.
+
+Sign builds and document security practices for customers.
+
+For sales to mid-size customers, schedule a penetration test before closing the deal.
+
+Excellent — you’re thinking like a founder and a security engineer at once. Below I’ll give a **detailed, prioritized, actionable plan** to make Devonix *difficult to tamper with or misuse*, map each major threat to specific countermeasures, list practical tools/vendors, and recommend when to call in outside help. I’ll focus on things you can implement for Stage-1 (MVP) and what to add before selling to mid/large customers.
+
+I’ll start with a compact summary (fast checklist), then expand into threats → defenses → how to package & ship securely → monitoring / detection / legal → who to hire and when.
 
 ---
 
-### 📁 Storage Format (JSON or DB)
+# Quick security checklist (what to do first — MVP priority)
 
-Example entry:
-
-```json
-{
-  "query": "How does the router work?",
-  "answer": "...",
-  "helpful": true,
-  "chunks": [...],
-  "timestamp": "2025-08-07T20:00:00Z"
-}
-```
+1. Sign all installers & binaries (Authenticode). ([DigiCert][1])
+2. Use signed cryptographic license files (private key sign; public key verify).
+3. Local enforcement + periodic signed “phone-home” usage reports (configurable offline grace).
+4. Use OAuth for personal users + SSO (SAML/OIDC/LDAP) for enterprise. ([Tesseral][2], [SSOJet][3])
+5. Protect secrets with a vault (or OS secure store); never hardcode. ([My blog][4])
+6. Run SAST (Snyk / SonarQube) and DAST (OWASP ZAP / Burp) before shipping. ([Mend.io][5], [OWASP][6], [Beagle Security][7])
+7. Provide clear telemetry/privacy opt-in and admin UI showing license status & last sync.
+8. Prepare for a pentest before mid-market sales (hire reputable firm). ([DeepStrike][8], [Redbot Security][9])
 
 ---
 
-Would you like me to generate the `FeedbackModel` + FastAPI route code too?
+# Threats → Concrete countermeasures (detailed)
+
+## A. Tampering / reverse engineering (someone modifies your EXE to bypass licensing)
+
+**Why dangerous:** local-only checks are trivially bypassed if attacker can change binary or read license format.
+**Defenses:**
+
+* **Code signing (Authenticode / EV code signing):** Sign installers & executables so OS shows “publisher verified” and tamper is detectable. Use a trusted CA (DigiCert, Sectigo, SSL.com). This is table-stakes for enterprises. ([DigiCert][1], [Sign My Code][10])
+* **License file cryptographic signatures:** License files signed by your private key. App verifies using embedded public key. Tampered license = invalid.
+* **Binary integrity checks:** App verifies its own checksums at runtime, and validates important files (ASAR, native libs).
+* **Obfuscation / native module for sensitive logic:** Keep critical checks out of plain JS. Use native compiled modules (C/C++/Rust) for license verification or use bytecode compilers; apply JS obfuscation/ASAR protection for Electron. This raises the bar (not perfect). ([electron-vite.org][11], [Stack Overflow][12])
+* **Tamper detection & response:** If tamper detected, lock down features, require admin re-auth, or show visible warning.
+  **MVP focus:** code signing + signed license files + basic obfuscation.
+
+## B. License/key sharing & over-usage
+
+**Why dangerous:** a single small-biz license used by many, kills revenue.
+**Defenses:**
+
+* **Bind license to company metadata:** company name, allowed domains, install\_id, and (optionally) HW fingerprint. Require admin approval (confirmation email to [admin@company.com](mailto:admin@company.com)).
+* **Local registry + distinct user tracking:** record unique user IDs (SSO subject or email) and enforce `max_users` during login.
+* **Periodic server validation (phone-home):** app sends minimal signed report (install\_id, current\_user\_count, timestamp). Server can mark overuse and notify admin/sales. Make this interval configurable and provide offline grace. (Be explicit in privacy docs).
+* **Concurrent session limits & rate limits**: enforce concurrent login thresholds in addition to distinct user counts.
+  **MVP focus:** local registry + signed license + optional weekly phone-home with grace.
+
+## C. Credential exposure (you storing customer passwords)
+
+**Why dangerous:** storing passwords makes you a target and creates liability.
+**Defenses:**
+
+* **Prefer SSO/OIDC/SAML/LDAP:** enterprises usually prefer federation; you avoid storing passwords. Use open source (Keycloak) or trusted vendors (Auth0). ([Tesseral][2], [SSOJet][3])
+* **If you must store:** use Argon2/bcrypt, strong salt, enforce complexity, account lockout, and store in an encrypted DB or OS credential store. Better: use HashiCorp Vault or OS keystore to store secrets. ([My blog][4])
+
+## D. Data exfiltration (Devonix accidentally sends company code offsite)
+
+**Why dangerous:** trust breaker; enterprise deal killer.
+**Defenses:**
+
+* **Design promise:** default *all processing on-premises*. Telemetry must be minimal & explicit.
+* **No raw code offsite:** if any optional cloud feature exists, make it opt-in and clearly show what is sent, with UI consent.
+* **Transport & storage encryption:** TLS for any network comms, encryption at rest (AES with KMS or local key).
+* **Log scrubbing & redaction:** never log raw customer code or secrets. Provide log redaction utility.
+  **MVP focus:** default local-only, telemetry opt-in, TLS.
+
+## E. Supply-chain & dependency risks
+
+**Why dangerous:** vulnerable libs create RCE/XSS/other holes.
+**Defenses:**
+
+* **SAST & dependency scanning:** integrate Snyk, Dependabot, or SonarQube into CI. ([Mend.io][5], [Solutions Review][13])
+* **DAST before release:** run OWASP ZAP / Burp Suite scans on frontend/backend. ([OWASP][6], [Beagle Security][7])
+* **Minimal third-party code in runtime paths** and routine dependency updates.
+  **MVP focus:** automated dependency scanning + weekly/CI SAST.
+
+## F. Remote exploitation (APIs / local admin pages exposed)
+
+**Why dangerous:** misconfigured networking can expose admin API externally.
+**Defenses:**
+
+* **Bind to localhost by default**; document explicit steps for opening ports.
+* **Mutual TLS or token auth** for any remote admin access. Use firewall & service account authentication.
+* **RBAC & least privilege** for APIs.
+  **MVP focus:** localhost binding + admin UI password + RBAC.
+
+## G. Plugin / extension abuse (if you allow plugins)
+
+**Why dangerous:** plugins can execute arbitrary code.
+**Defenses:**
+
+* **Sandbox plugin runtime** (run in separate processes / restricted containers).
+* **Whitelist plugin capabilities & require code review for third-party plugins.**
+  **MVP focus:** disallow third-party plugins until you build sandboxing.
+
+---
+
+# Packaging & distribution: secure EXE delivery (practical)
+
+### Recommended stack for Electron style product
+
+* Build with **Electron + React** for frontend, backend as a local Node/Python process. Use **electron-builder** or **Electron Forge** to package. Choose electron-builder for mature targets and installer types. ([Electron Forge][14], [Stack Overflow][15])
+* **Sign the installers & executables** (DigiCert/other CA). EV Code Signing is best for Windows; it gives higher trust. ([DigiCert][1], [Sign My Code][10])
+* **ASAR + obfuscation**: bundle JS into ASAR and obfuscate. Consider placing critical logic into a native addon (compiled). ([electron-vite.org][11])
+* **Secure updater:** signed updates only. Allow admins to disable auto-update. Use delta updates to reduce attack surface.
+
+**What to ensure in the installer:**
+
+* Admin configurable license import and SSO metadata screens.
+* Option to run backend as a Windows service (with clear docs).
+* Option to choose online / offline mode and set grace period.
+* Telemetry consent checkbox.
+
+---
+
+# Monitoring, detection & incident response
+
+* **Minimal telemetry for license enforcement**: (install\_id, licensed\_max\_users, hashed license\_id, current\_user\_count, timestamp). Explicit opt-in.
+* **Local audit logs**: keep user activity logs locally; exportable for compliance.
+* **Server alerts**: when phone-home reports overuse, auto-email admin & sales.
+* **Incident response plan**: document steps for compromised license / vulnerability disclosure, include contact, timeline, and rollback procedure.
+* **Bug bounty / responsible disclosure** once you have paying customers. Consider HackerOne or Bugcrowd later.
+
+---
+
+# Legal & contract controls (business layer)
+
+* **License agreements**: terms that prohibit reverse engineering and unauthorized redistribution.
+* **Acceptable Use Policy (AUP)**: clear restrictions and consequences for abuse.
+* **Onboarding verification**: require company admin verification (email domain) when issuing license.
+  Legal controls won’t stop attackers, but they provide enforcement channels and deter casual misuse.
+
+---
+
+# When to call external security help (and who)
+
+* **Before selling to mid-market**: get a focused web/app + binary pentest (red team + SCA). Hire a reputable firm (Bishop Fox, NCC Group, TrustedSec, or local specialists). ([DeepStrike][8], [Redbot Security][9])
+* **Before large enterprise deals**: SOC2 readiness and an external annual audit (possibly with a consultancy).
+* **If you implement DRM / complex anti-tamper**: get specialists — DRM/anti-tamper is tricky and can break installs.
+
+Suggested vendors/tools (start here):
+
+* **Code signing:** DigiCert / Sectigo / SSL.com. ([DigiCert][1], [Sign My Code][10])
+* **SAST:** Snyk, SonarQube, Checkmarx. ([Mend.io][5], [Solutions Review][13])
+* **DAST:** OWASP ZAP (open), Burp Suite (commercial). ([OWASP][6], [Beagle Security][7])
+* **Secrets management:** HashiCorp Vault / AWS Secrets Manager / Azure Key Vault (choose per customer). ([My blog][4])
+* **SSO providers:** Keycloak (open source), Auth0, Okta, OneLogin. ([Tesseral][2], [SSOJet][3])
+* **Pentest firms:** Bishop Fox, NCC Group, TrustedSec, Synopsys (or local boutique firms). ([DeepStrike][8], [Redbot Security][9])
+
+---
+
+# Prioritized implementation plan & timeline (student founder, 6 months)
+
+### Month 0 (planning)
+
+* Finalize login architecture (OAuth personal, SSO first for enterprise). ([Tesseral][2])
+* Design license file format & signing key process.
+* Decide packaging stack (Electron + electron-builder or native binary).
+
+### Month 1–2 (MVP security foundations)
+
+* Implement signed license verification + local registry + admin UI.
+* Implement OAuth & a stub SSO integration flow.
+* Bind server to localhost by default; basic RBAC & session token model.
+* Integrate dependency scanning (Snyk/Dependabot). ([Mend.io][5])
+
+### Month 3 (hardening & packaging)
+
+* Package app into signed EXE/installer (purchase code signing cert). ([DigiCert][1])
+* Add ASAR/encryption + JS obfuscation for frontend bundle. ([electron-vite.org][11])
+* Add TLS and secure updater (signed updates).
+
+### Month 4 (testing)
+
+* Run SAST & DAST (OWASP ZAP) locally against your app. ([OWASP][6])
+* Penetration test engagement (small scoped: install + license bypass attempts + API exposure) — hire a boutique firm or freelance pentester.
+
+### Month 5 (pilot & telemetry)
+
+* Do 1–2 pilot installs with friendly customers; enable telemetry opt-in; test phone-home & license enforcement.
+* Improve UX for admin license / sync UI.
+
+### Month 6 (sales readiness)
+
+* Final pentest report fixes; prepare sales materials: security brief, data handling policy, installer & admin docs.
+* Consider bug bounty / public responsible disclosure channel.
+
+---
+
+# Final recommendations (straight talk)
+
+* **Do Stage-1 security in-house**: you can (and should) implement the core protections yourself. Start with code signing, signed licenses, SSO/OAuth, local-only default, SAST/DAST scans, and clear telemetry consent. ([DigiCert][1], [Mend.io][5], [OWASP][6])
+* **Buy expertise when you need proofs** (pentests, SOC2): bring in external firms right before selling to mid-market / large customers. ([DeepStrike][8])
+* **Be transparent** with customers about what telemetry you collect — secrecy ruins trust.
+* **Prefer SSO over storing passwords** — it reduces your liability and is what enterprises expect. ([Tesseral][2])
+
+---
+
+If you want, next I can:
+
+* Draft the **exact license file JSON schema** (fields + signing steps + verification flow) you can hand to your devs;
+* Draft the **installer admin UI flow** for license import, SSO setup, and offline/online configuration; or
+* Produce a **one-page security brief** you can show to potential pilot customers describing exactly what Devonix collects and how you protect data.
+
+Which of those would help you implement this fastest?
+
+[1]: https://www.digicert.com/signing/code-signing-certificates?utm_source=chatgpt.com "Buy Code Signing Certificates"
+[2]: https://tesseral.com/guides/open-source-auth-providers-in-2025-best-solutions-for-open-source-auth?utm_source=chatgpt.com "Best open source auth providers in 2025"
+[3]: https://ssojet.com/blog/top-sso-providers?utm_source=chatgpt.com "Top 15 SSO Providers 2025 – Secure Your Systems ..."
+[4]: https://sanj.dev/post/hashicorp-vault-aws-secrets-azure-key-vault-comparison?utm_source=chatgpt.com "HashiCorp Vault vs AWS Secrets Manager vs Azure Key Vault"
+[5]: https://www.mend.io/blog/best-sast-tools/?utm_source=chatgpt.com "Best SAST Tools: Top 10 Solutions in 2025"
+[6]: https://owasp.org/www-project-devsecops-guideline/latest/02b-Dynamic-Application-Security-Testing?utm_source=chatgpt.com "OWASP DevSecOps Guideline - v-0.2 | OWASP Foundation"
+[7]: https://beaglesecurity.com/blog/article/burpsuite-vs-zap.html?utm_source=chatgpt.com "BurpSuite vs ZAP: Which is the best choice for you? [2025]"
+[8]: https://deepstrike.io/blog/top-penetration-testing-companies-2025?utm_source=chatgpt.com "Top 15 Penetration Testing Companies in 2025 | DeepStrike"
+[9]: https://redbotsecurity.com/top-cybersecurity-companies/?utm_source=chatgpt.com "Top Cybersecurity Companies 2025 | Service Leaders by Industry"
+[10]: https://signmycode.com/blog/best-code-signing-certificates?utm_source=chatgpt.com "Best Code Signing Certificates & Trusted Providers 2025"
+[11]: https://electron-vite.org/guide/source-code-protection?utm_source=chatgpt.com "Source Code Protection"
+[12]: https://stackoverflow.com/questions/58103656/how-to-perform-obfuscation-of-source-code-and-protect-source-in-electron-js?utm_source=chatgpt.com "How to perform obfuscation of source code and protect ..."
+[13]: https://solutionsreview.com/endpoint-security/the-top-static-application-security-testing-sast-tools-and-solutions/?utm_source=chatgpt.com "The Top Static Application Security Testing (SAST) Tools and ..."
+[14]: https://www.electronforge.io/core-concepts/why-electron-forge?utm_source=chatgpt.com "Why Electron Forge?"
+[15]: https://stackoverflow.com/questions/68337978/huge-difference-in-build-size-of-electron-forge-and-electron-builder?utm_source=chatgpt.com "Huge difference in build size of Electron Forge and ..."
+
+
+
+
+
+ Create DB schema (users + refresh_tokens).
+
+ Register app with Google (get credentials).
+
+ Add environment variables (CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, JWT_ACCESS_SECRET, etc.).
+
+ Sketch out auth routes (/auth/google, /auth/google/callback, /token/refresh, /auth/logout).
+
+ Verify flow manually (user → Google login → redirected back → token issued).
+
+ Store new user row in DB after login.
+
+ Return JWTs (access + refresh) to client via cookies.
