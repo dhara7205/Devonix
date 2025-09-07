@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from server.auth import get_current_user    
 from server.schemas import EmbedRequest, AskRequest, QAPair, FeedbackRequest, ConfigRequest
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from cli.main import run_embedding_pipeline
 from cli.query import run_query_pipeline
 from license.license_manager import LicenseManager
@@ -8,10 +11,13 @@ import os
 import tempfile
 import threading
 from typing import Optional
+
+_thread_pool = ThreadPoolExecutor(max_workers=2)
+
 router = APIRouter()
 
 @router.post("/embed")
-def embed_codebase(req: EmbedRequest):
+async def embed_codebase(req: EmbedRequest,background_tasks: BackgroundTasks, user = Depends(get_current_user)):
     license = LicenseManager()
     run_embedding_pipeline(
         root_dir=req.folder_path,
@@ -23,8 +29,10 @@ def embed_codebase(req: EmbedRequest):
     return {"status": "success", "message": "Embedding completed"}
 
 @router.post("/ask")
-def ask_question(req: AskRequest):
-    result = run_query_pipeline(req.question)
+async def ask_question(req: AskRequest,user = Depends(get_current_user)):
+    license_mgr = LicenseManager()
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(_thread_pool, lambda: run_query_pipeline(req.question))
     return result
 
 FIXED_FILENAME = "qa_store.json"
@@ -90,7 +98,7 @@ def _resolve_store_path(request_store_dir: Optional[str], filename: str) -> str:
     return os.path.join(chosen_dir, filename)
 
 @router.post("/qa/store", status_code=201)
-def store_qa(pair: QAPair):
+def store_qa(pair: QAPair,user = Depends(get_current_user)):
     """
     Accepts {"question": "...", "answer": "...", "store_dir": "/path/to/dir"}.
     Saves into <store_dir>/qa_store.json (or ./qa_store.json if store_dir omitted).
@@ -189,7 +197,7 @@ _load_config_from_disk()
 
 # ---------------- Config endpoints ----------------
 @router.post("/qa/config", status_code=200)
-def set_qa_config(cfg: ConfigRequest):
+def set_qa_config(cfg: ConfigRequest,user = Depends(get_current_user)):
     """
     Set the required LLM config. This route is expected to be called by the UI once.
     Body: { api_key, api_endpoint, store_dir }
@@ -234,7 +242,7 @@ def set_qa_config(cfg: ConfigRequest):
     return {"status": "success", "api_endpoint": EXTERNAL_API_ENDPOINT, "store_dir": DEFAULT_STORE_DIR}
 
 @router.get("/qa/config", status_code=200)
-def get_qa_config():
+def get_qa_config(user = Depends(get_current_user)):
     """
     Return the currently saved configuration (if any).
     """
