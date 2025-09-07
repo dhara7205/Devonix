@@ -1,6 +1,7 @@
 # Ignore .env file
 .env
 private_key.pem
-node_modules
+
 # Ignore logs folder
 logs/
+node_modules/
