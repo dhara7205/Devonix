@@ -416,16 +416,191 @@ Which of those would help you implement this fastest?
 
 
 
- Create DB schema (users + refresh_tokens).
+ Nice — let’s lay out a **clean, stage-by-stage plan** for implementing the backend (SSO + RBAC + seat enforcement + audit logs). No code yet — you’ll ask for code per stage and I’ll give it in your chosen stack.
 
- Register app with Google (get credentials).
+# Overview / recommended choices (MVP)
 
- Add environment variables (CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, JWT_ACCESS_SECRET, etc.).
+* **Protocol to start with:** **OIDC (OpenID Connect)** — simpler than SAML and faster to get an enterprise demo working.
+* **DB:** PostgreSQL (relational fits multi-tenant + billing + audit).
+* **Auth model:** SSO JIT provisioning, local user records (store `sso_sub` + `email`), app sessions (short JWT + server-side refresh).
+* **Seat model:** seat = provisioned user record that is `active = true`.
+* **Roles:** Keep minimal at first — `org_admin`, `developer`, `viewer`. Expand later.
 
- Sketch out auth routes (/auth/google, /auth/google/callback, /token/refresh, /auth/logout).
+---
 
- Verify flow manually (user → Google login → redirected back → token issued).
+# Stages (high level) — ask for code for any stage and name your stack
 
- Store new user row in DB after login.
+## Stage 0 — Prep & Decisions (do this before coding)
 
- Return JWTs (access + refresh) to client via cookies.
+* Decide: **OIDC or SAML** (I recommend OIDC for MVP).
+* Pick tech stack (Node/Express or Python/FastAPI).
+* Create a dev IdP (Okta Dev org or Keycloak) for testing.
+* Create a tenant/license test row in DB (set `max_users`).
+
+**Deliverable:** clear choices & dev IdP ready.
+**Acceptance:** you can hit IdP discovery endpoint from your machine.
+
+---
+
+## Stage 1 — DB schema & migrations
+
+* Create minimal tables: `tenants`, `tenant_licenses`, `users`, `roles`, `user_roles`, `sessions`, `audit_logs`.
+* Key fields (high level):
+
+  * `tenants`: `id, name`
+  * `tenant_licenses`: `tenant_id, max_users, expiry`
+  * `users`: `id, tenant_id, email, sso_sub, active, created_at, last_seen`
+  * `roles`: `id, tenant_id (nullable for global), name`
+  * `user_roles`: `user_id, role_id, assigned_by, assigned_at`
+  * `sessions`: `id, user_id, refresh_token_hash, revoked, created_at`
+  * `audit_logs`: `id, tenant_id, actor_user, event_type, target_user, details(JSON), timestamp`
+
+**Deliverable:** DB migrations created and applied.
+**Acceptance:** tables exist and you can insert/select test rows.
+
+---
+
+## Stage 2 — SSO (OIDC) integration: login flow + callback handler
+
+* Implement SP endpoints (backend):
+
+  * `/sso/:tenant/redirect` — builds and redirects to IdP auth URL.
+  * `/sso/:tenant/callback` — receives id\_token, validates signature/aud/exp/nonce, parses claims (`sub`, `email`, `name`).
+* Extract canonical identity: `sso_sub = iss + '|' + sub` or store `iss` and `sub` separately.
+* Log SSO login attempt in `audit_logs`.
+
+**Deliverable:** user can authenticate via dev IdP and reach your callback endpoint.
+**Acceptance:** validated token, parsed claims, callback returns success (no provisioning yet).
+
+---
+
+## Stage 3 — JIT provisioning + seat enforcement
+
+* Sequence on successful SSO callback:
+
+  1. Lookup user by `sso_sub` or `email`.
+  2. If user exists and `active` → allow sign-in. Update `last_seen`.
+  3. If user does not exist → check license (`active_count < max_users`).
+
+     * If seat available → create user record, assign default role (e.g., `developer`), increment provisioned count (or derived). Log provisioning. Issue app session.
+     * If seats exhausted → block provisioning and return a friendly message (`"seats_full"`). Log attempt.
+* Implement server-side session issuance (short JWT + refresh token stored hashed in `sessions`).
+
+**Deliverable:** SSO login can create an account if seat available; blocked if full.
+**Acceptance:** new user record is created and session returned on success; blocked when seat cap reached.
+
+---
+
+## Stage 4 — Sessions & session revocation
+
+* Short-lived JWTs for API auth; refresh tokens persisted server-side (hash).
+* On deactivation: revoke refresh tokens and mark active=false. Ensure middleware rejects requests for deactivated users even with valid JWT.
+* Endpoint: `POST /auth/refresh` (refresh JWT using server-side refresh token).
+
+**Deliverable:** secure session flow + revocation support.
+**Acceptance:** after deactivation, requests fail; refresh token invalidated.
+
+---
+
+## Stage 5 — RBAC model + admin APIs
+
+* Implement tables (`roles`, `user_roles`). Seed minimal roles per tenant.
+* Admin APIs (backend):
+
+  * `GET /admin/users` — list users with `email, roles, active, last_seen`.
+  * `POST /admin/users/:id/deactivate` — deactivate user, revoke sessions, log action.
+  * `POST /admin/users/:id/reactivate` — reactivate (subject to seat limits).
+  * `POST /admin/roles/assign` — assign role to user (Admin-only).
+  * `GET /admin/usage` — `active_count / max_users`.
+
+**Deliverable:** admin can manage users and roles via APIs.
+**Acceptance:** role assignment persists; role checks enforced on protected endpoints.
+
+---
+
+## Stage 6 — Middleware & enforcement
+
+* Implement request middleware that:
+
+  * Authenticates JWT and loads `user_id`, `tenant_id`.
+  * Loads cached roles for user.
+  * Denies access if `active = false`.
+  * Provides helper `requireRole('org_admin')` or `requirePermission('view_audit_logs')`.
+
+**Deliverable:** role enforcement works across endpoints.
+**Acceptance:** protected endpoints reject non-role users.
+
+---
+
+## Stage 7 — Audit logging (centralized)
+
+* Centralize logging for events (structured JSON): `sso_login`, `provisioned_user`, `deactivated_user`, `assigned_role`, `failed_provision_seats_full`, `query_executed` (later).
+* Ensure logs include actor, target, tenant, IP (optional), and timestamp.
+* Admin API to export logs `GET /admin/audit?from=&to=&user=&event_type=`.
+
+**Deliverable:** append-only audit logs stored and exportable.
+**Acceptance:** logs show events for test flows and export works.
+
+---
+
+## Stage 8 — Admin UX APIs & notifications
+
+* Implement endpoints for admin UI (no frontend now):
+
+  * Invite flow (optional): `POST /admin/invite` (creates pending invite).
+  * Request seats: `POST /admin/request-seats` (creates ticket or triggers webhook to billing).
+  * Notifications: email or webhook when seats exhausted or on new provisioning (optional).
+
+**Deliverable:** admin APIs ready for front-end integration.
+**Acceptance:** admin can trigger deactivation/reactivation and see usage.
+
+---
+
+## Stage 9 — Testing & IdP interoperability
+
+* Test with dev IdP (Okta or Keycloak). Test flows: login, JIT provisioning, seat exhaustion, deactivation.
+* Edge cases: email collision (same email from different IdP issuers), multiple IdPs per tenant, clock skew, replay.
+* Prepare scripted tests (Postman collection) for the happy & unhappy paths.
+
+**Deliverable:** verified with at least one IdP.
+**Acceptance:** tests pass; documented IdP setup instructions for onboarding.
+
+---
+
+## Stage 10 — Optional / future stages
+
+* **SCIM**: automatic provisioning/deprovisioning from IdP.
+* **SAML support**: add SAML flows for IdPs requiring SAML.
+* **Fine-grained permissions**: `permissions` table and UI for role composition.
+* **Analytics**: usage dashboards, last-seen cleanup automation.
+* **Hardening & certs**: TLS everywhere, rotate keys, monitor.
+
+---
+
+## Stage 11 — Deployment, monitoring & handoff
+
+* Prepare production config: env variables for IdP metadata per tenant, key management, backups, log retention policy.
+* Add monitoring/alerts for provisioning failures and auth errors.
+* Documentation for onboarding customers (fields you need from the IdP).
+
+**Deliverable:** deployable backend with docs.
+**Acceptance:** production ready endpoints and runbook for onboarding.
+
+---
+
+# For each stage I’ll provide when you ask:
+
+* Exact DB migration SQL.
+* Exact API endpoint contracts (request/response JSON).
+* Backend code for the chosen stack implementing the endpoints & middleware.
+* Postman / curl test scripts and sample IdP config (Okta/Keycloak).
+
+When you want code for a stage, say:
+
+1. **Stage number** (e.g., “Stage 1”),
+2. **Stack** (Node/Express or Python/FastAPI), and
+3. Any small preference (JWT vs session cookie, or OIDC vs SAML if you want to change).
+
+---
+
+Ready to start? If yes, tell me **which Stage you want to implement first** (I suggest Stage 1 DB schema), and **which stack** you prefer — then I’ll give you the exact migration script / schema and the API contract for Stage 2 next.

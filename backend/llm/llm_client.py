@@ -20,7 +20,7 @@ def get_answer(prompt: str) -> str:
     Sends a prompt to Gemini 1.5 Flash and returns the model's text response.
     """
     api_key = _load_config()
-    api_url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
+    api_url = f"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={api_key}"
 
     system_instruction = "You are a code expert. Answer the question accurately based on the given code context."
 

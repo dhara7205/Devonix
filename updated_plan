@@ -1,0 +1,277 @@
+Perfect — **let’s slow down, breathe, and create a clear, structured task plan** for Devonix so you’re not overwhelmed and everything feels achievable.
+
+We will build a clean roadmap divided into:
+
+### ✅ Phase 1 — Stability & Core Improvements
+
+### ✅ Phase 2 — Developer Experience (DX) Enhancements
+
+### ✅ Phase 3 — Code Intelligence Features
+
+### ✅ Phase 4 — Enterprise Layer
+
+### ✅ Phase 5 — UI/UX Polish
+
+### ✅ Phase 6 — Monetization & Launch Prep
+
+Each phase will contain **3–5 tasks max**, each small enough to complete without stress.
+
+After this, you can pick which **tasks to start this week** and I will break those into GitHub issues with acceptance criteria.
+
+---
+
+# 🟦 **PHASE 1 — Core Architecture & Stability (Foundational)**
+
+**Goal:** Make the existing system stable, modular, and ready for more features.
+
+### **Task 1: Add Repo Metadata to Each Chunk**
+
+* store repo_id, file_path, start_line, hash
+* needed for multi-repo support
+
+### **Task 2: Incremental Indexing**
+
+* detect modified files
+* only re-index updated ones
+* massive time saver
+
+### **Task 3: Improve Chunker Accuracy**
+
+* ensure AST-based chunk boundaries
+* prevent context leakage
+
+### **Task 4: Standardize LLM Provider Interface**
+
+* wrapper for OpenAI / local models
+* easy to extend later
+
+---
+
+# 🟩 **PHASE 2 — DX Enhancements (Developer Experience)**
+
+**Goal:** Make Devonix actually pleasant for developers to use.
+
+### **Task 5: Add Multi-Repo Selector in UI**
+
+* dropdown for repos
+* filter queries by repo
+
+### **Task 6: Add Repo-Level Dashboard**
+
+Shows:
+
+* number of files
+* indexing status
+* last updated
+* total chunks
+
+### **Task 7: Improve Query Retrieval Pipeline**
+
+* top-k filtering
+* per-language ranking
+* better chunk merging
+
+---
+
+# 🟧 **PHASE 3 — Code Intelligence Features (Cody-like)**
+
+**Goal:** Start giving Devonix "superpowers" that make it unique.
+
+### **Task 8: Build Function/Method Call Graph (Python First)**
+
+* AST parser
+* source -> destination edges
+* DB schema
+* simple graph in UI
+
+### **Task 9: Add “Explain This Function” Feature**
+
+When user views a file/function:
+
+* fetch definition
+* retrieve similar usages
+* generate short explanation via LLM
+
+### **Task 10: Add “Find All References”**
+
+Works using:
+
+* AST
+* embeddings
+* search across repos
+
+---
+
+# 🟨 **PHASE 4 — Enterprise Layer**
+
+**Goal:** Make Devonix usable by teams & companies.
+
+### **Task 11: Add RBAC (Roles: Admin, User)**
+
+* restrict repo creation to admin
+* restrict index deletion
+
+### **Task 12: Add Audit Logs**
+
+* every query is logged
+* timestamp + user + repo
+* stored in a table
+
+### **Task 13: Add On-Prem Policies**
+
+* block external LLM calls
+* allow only local models
+* per-repo setting
+
+---
+
+# 🟪 **PHASE 5 — UI/UX Polish**
+
+**Goal:** Make Devonix feel like a product, not a prototype.
+
+### **Task 14: Improve File Browser UI**
+
+* tree view
+* clickable directories
+* syntax highlighting
+
+### **Task 15: Add Visual Graph View**
+
+* display call graph
+* nodes = functions
+* edges = calls
+* simple d3/sigma.js graph
+
+### **Task 16: Add Query Templates**
+
+Examples:
+
+* “Explain the architecture”
+* “Find where this API is implemented”
+* “Trace user login flow”
+
+---
+
+# 🟥 **PHASE 6 — Monetization & Launch Prep**
+
+**Goal:** Prepare to release Devonix publicly.
+
+### **Task 17: Add Project Limit Per User**
+
+* free users: 3 projects
+* show upgrade banner
+* enforce via DB count
+
+### **Task 18: Add Basic Payment Integration**
+
+(Optional for now)
+
+* Stripe
+* Paddle
+
+### **Task 19: Create Landing Page**
+
+* what is Devonix
+* main features
+* screenshots
+* quickstart
+
+### **Task 20: Make 2-Min Demo Video**
+
+This accelerates adoption + hackathon pitches.
+
+---
+
+🟩 PHASE 7 — Intelligent Learning Layer (Local Model Training)
+
+Goal: Allow Devonix to improve over time using developer feedback.
+This makes Devonix smarter the longer a dev team uses it.
+
+Task 21 — Developer Feedback Collection (Already Started)
+
+Store feedback logs in a structured format:
+
+query
+
+LLM response
+
+was it helpful? (yes/no)
+
+corrected answer (if provided)
+
+context chunks used
+
+repo/file reference
+
+timestamp + user ID
+
+This becomes the training goldmine.
+
+Task 22 — Build Training Dataset Generator
+
+Convert logs → structured fine-tuning dataset:
+
+Format for OpenAI fine-tuning
+
+Format for Llama / Mistral fine-tuning
+
+Format for QLoRA (for local fine-tunes)
+
+Dataset types:
+
+input: query + retrieved context
+
+expected_output: corrected answer
+
+metadata fields
+
+This dataset builder is GOLD.
+
+Task 23 — Local Model Fine-Tuning Support (QLoRA)
+
+Support training a local model:
+
+Llama 3 8B
+
+Mistral 7B
+
+Qwen 4B
+
+Gemma 7B
+
+Training pipeline (down the line):
+
+QLoRA adapters
+
+store LoRA weights
+
+merge adapters on load
+
+This is the “Devonix enterprise intelligence” mode.
+
+Task 24 — Reinforcement Signals From Usage
+
+Rank retrievals based on:
+
+which chunks resulted in correct answers
+
+developer approval
+
+similarity between corrected answer & previous answer
+
+This improves retrieval scoring.
+
+Task 25 — Model Personalization UI
+
+In the admin dashboard:
+
+show model improvement metrics
+
+show # of training samples collected
+
+allow exporting dataset
+
+allow triggering fine-tune
+
+This is premium-tier functionality.
+

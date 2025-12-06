@@ -1,0 +1,117 @@
+🚀 Devonix v2 Roadmap (6-Month Plan)
+
+A realistic, structured roadmap divided into Core Intelligence, Platform Enhancements, and Enterprise Features.
+
+🔹 Phase 1 — Core Code Intelligence Improvements (Weeks 1–4)
+1. Cross-Repo Semantic Search
+
+Index multiple repositories into a unified embedding store
+
+Add repo filters and service grouping
+
+Faster onboarding for microservice architectures
+
+2. Function / Method Call Graph
+
+Build AST-based call graph
+
+Show “who calls whom”
+
+Enable tree-based navigation for complex flows
+
+3. Codebase Entity Linking
+
+Link functions, classes, modules across files
+
+Store metadata in PostgreSQL for fast lookup
+
+🔹 Phase 2 — Developer Tools & UX (Weeks 5–10)
+4. Architectural Summaries
+
+Generate module-level summaries
+
+Graph of major components
+
+Data-flow explanation for selected modules
+
+5. AI-Powered Repo Q&A (Better Prompting)
+
+Use retrieval pipelines optimized for code context
+
+Improve accuracy through AST-aware chunking
+
+6. Interactive Documentation Generator
+
+Auto-generate:
+
+API docs
+
+Service summaries
+
+Design diagrams
+
+Export to Markdown / PDF
+
+7. PR Reviewer Mode
+
+Take Git diff → Produce review suggestions
+
+Detect breaking changes across files
+
+Suggest potential fixes
+
+🔹 Phase 3 — Enterprise Readiness (Weeks 11–18)
+8. On-Prem Model Support
+
+Support Llama 3, Mistral, Qwen via local inference
+
+No cloud dependency
+
+Important for BFSI + Gov orgs
+
+9. CI/CD Integration
+
+Devonix runs code intelligence checks automatically
+
+Can leave comments on pull requests
+
+Detect risks earlier
+
+10. Security Advisor Module
+
+Detect insecure patterns
+
+Hardcoded secrets
+
+Logging vulnerabilities
+
+Outdated dependencies (optional)
+
+🔹 Phase 4 — Scalability & Distribution (Weeks 19–24)
+11. Multi-user Tenant Support
+
+Role-based access controls
+
+Team spaces
+
+12. Custom Model Fine-Tuning Hooks
+
+Fine-tune on the company’s internal codebase
+
+Improves accuracy massively
+
+13. Improved UI/UX Dashboard
+
+Code complexity heatmap
+
+Indexing status
+
+System health & usage metrics
+
+🌟 Devonix v2 Outcome
+
+By the end of this roadmap, Devonix becomes:
+
+👉 A serious lightweight competitor to Sourcegraph Cody
+👉 Production-ready for mid–large enterprises
+👉 Completely on-prem, extensible, and developer-friendly

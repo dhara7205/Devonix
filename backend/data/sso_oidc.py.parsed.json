@@ -1,0 +1,15 @@
+[
+  {
+    "file": "sso_oidc.py",
+    "rel_path": "server/sso_oidc.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "register_oidc_client_dyn",
+    "qualified_name": "sso_oidc.register_oidc_client_dyn",
+    "start_line": 24,
+    "end_line": 36,
+    "docstring": "",
+    "code": "def register_oidc_client_dyn(oauth_registry: OAuth, tenant_id: str, issuer: str, client_id: str, client_secret: Optional[str], redirect_uri: str, scopes: str = \"openid email profile\"):\n    name = f\"oidc_tenant_{tenant_id}\"\n    if name in oauth_registry:\n        return name\n    oauth_registry.register(\n        name=name,\n        client_id=client_id,\n        client_secret=client_secret,\n        server_metadata_url=issuer.rstrip(\"/\") + \"/.well-known/openid-configuration\",\n        client_kwargs={\"scope\": scopes},\n        redirect_uri=redirect_uri,\n    )\n    return name"
+  }
+]

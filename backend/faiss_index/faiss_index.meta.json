@@ -7,8 +7,8 @@
     "type": "function",
     "name": "issue_access_token",
     "qualified_name": "auth.issue_access_token",
-    "start_line": 54,
-    "end_line": 57,
+    "start_line": 55,
+    "end_line": 58,
     "docstring": "",
     "code": "def issue_access_token(user_id: str, role: str):\n    now = int(time.time())\n    payload = {\"user_id\": user_id, \"role\": role, \"iat\": now, \"exp\": now + JWT_ACCESS_EXPIRES_SECONDS}\n    return jwt.encode(payload, JWT_ACCESS_SECRET, algorithm=\"HS256\")"
   },
@@ -20,8 +20,8 @@
     "type": "function",
     "name": "issue_refresh_token",
     "qualified_name": "auth.issue_refresh_token",
-    "start_line": 59,
-    "end_line": 63,
+    "start_line": 60,
+    "end_line": 64,
     "docstring": "",
     "code": "def issue_refresh_token(user_id: str):\n    now = int(time.time())\n    token_id = os.urandom(16).hex()\n    payload = {\"user_id\": user_id, \"token_id\": token_id, \"iat\": now, \"exp\": now + JWT_REFRESH_EXPIRES_SECONDS}\n    return jwt.encode(payload, JWT_REFRESH_SECRET, algorithm=\"HS256\")"
   },
@@ -33,8 +33,8 @@
     "type": "function",
     "name": "set_auth_cookies",
     "qualified_name": "auth.set_auth_cookies",
-    "start_line": 66,
-    "end_line": 74,
+    "start_line": 67,
+    "end_line": 75,
     "docstring": "",
     "code": "def set_auth_cookies(response: Response, access_token: str, refresh_token: str):\n    cookie_opts = {\n        \"httponly\": True,\n        \"secure\": COOKIE_SECURE,\n        # path default '/'\n    }\n    # access token short lived (browser-visible not required)\n    response.set_cookie(\"access_token\", access_token, max_age=JWT_ACCESS_EXPIRES_SECONDS, **cookie_opts)\n    response.set_cookie(\"refresh_token\", refresh_token, max_age=JWT_REFRESH_EXPIRES_SECONDS, **cookie_opts)"
   },
@@ -364,6 +364,19 @@
     "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Codebase Scanner CLI\")\n    parser.add_argument(\"root_dir\", nargs=\"?\", type=str, help=\"Root directory of the codebase to scan (e.g., ./my_project)\")\n    parser.add_argument(\"--embed\", action=\"store_true\", help=\"Generate embeddings and export FAISS index\")\n    parser.add_argument(\"--model\", type=str, default=\"all-MiniLM-L6-v2\", help=\"Model name for embeddings\")\n    parser.add_argument(\"--output\", type=str, default=\"faiss_index\", help=\"Output path prefix for FAISS index\")\n    parser.add_argument(\"--data-dir\", type=str, default=\"data\", help=\"Directory to store parsed chunks\")\n    parser.add_argument(\"--license-info\", action=\"store_true\", help=\"Show license information and exit\")\n\n    args = parser.parse_args()\n\n    # Load license manager (it will attempt to read ~/.codexpro.license and public_key.pem)\n    license = LicenseManager()\n\n    # --license-info: print summary if valid, otherwise state community mode\n    if args.license_info:\n        summary = license.get_summary() if license.is_valid() else None\n        if summary:\n            print(summary)\n        else:\n            print(\"\u2139\ufe0f No valid license found. Running in Community mode (limits apply).\")\n        return\n\n    # If license is missing/invalid, do NOT block \u2014 treat as community mode.\n    if not license.is_valid():\n        # Only show a single friendly warning (don't spam)\n        logger.warning(\"\u26a0\ufe0f No valid license detected. Running in Community mode (limited to 50 files, 200 chunks).\")\n        logger.warning(\"If you have a license, place it at ~/.codexpro.license or check that public_key.pem exists in backend/license/\")\n\n    # If license exists and is enterprise, inform the user (no limits)\n    if license.is_valid() and license.is_enterprise():\n        logger.info(\"\u2705 Enterprise license detected \u2014 running with full capabilities.\")\n    else:\n        # Either a valid community license, or no/invalid license -> community mode\n        if license.is_valid():\n            logger.info(\"\u2705 Community license detected \u2014 running with community limits.\")\n        # else: already warned above\n\n    # Run embedding pipeline if requested\n    if args.embed:\n        if not args.root_dir:\n            print(\"\u2757 Please provide a root directory for embedding.\")\n            return\n\n        run_embedding_pipeline(\n            root_dir=args.root_dir,\n            model_name=args.model,\n            output_dir=args.output,\n            data_dir=args.data_dir,\n            license=license\n        )"
   },
   {
+    "file": "main.py",
+    "rel_path": "server/main.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "_dsn_replace_host_with_127",
+    "qualified_name": "main._dsn_replace_host_with_127",
+    "start_line": 43,
+    "end_line": 58,
+    "docstring": "Return a new DSN identical to `dsn` but with hostname replaced by 127.0.0.1.",
+    "code": "def _dsn_replace_host_with_127(dsn: str) -> str:\n    \"\"\"Return a new DSN identical to `dsn` but with hostname replaced by 127.0.0.1.\"\"\"\n    parsed = urlparse(dsn)\n    if not parsed.hostname:\n        return dsn\n    # preserve username:password if present\n    userinfo = \"\"\n    if parsed.username:\n        userinfo = parsed.username\n        if parsed.password:\n            userinfo += \":\" + parsed.password\n        userinfo += \"@\"\n    port = f\":{parsed.port}\" if parsed.port else \"\"\n    new_netloc = f\"{userinfo}127.0.0.1{port}\"\n    new_parsed = parsed._replace(netloc=new_netloc)\n    return urlunparse(new_parsed)"
+  },
+  {
     "file": "parser.py",
     "rel_path": "indexer/parser.py",
     "repo": "codexpro",
@@ -395,10 +408,23 @@
     "repo": "codexpro",
     "language": "python",
     "type": "function",
+    "name": "get_embed_model",
+    "qualified_name": "query.get_embed_model",
+    "start_line": 29,
+    "end_line": 34,
+    "docstring": "",
+    "code": "def get_embed_model():\n    global _embed_model\n    if _embed_model is None:\n        # load here when actually required\n        _embed_model = SentenceTransformer(\"all-MiniLM-L6-v2\")\n    return _embed_model"
+  },
+  {
+    "file": "query.py",
+    "rel_path": "cli/query.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
     "name": "load_faiss_index",
     "qualified_name": "query.load_faiss_index",
-    "start_line": 26,
-    "end_line": 37,
+    "start_line": 36,
+    "end_line": 47,
     "docstring": "",
     "code": "def load_faiss_index(index_dir, index_name):\n    index_path = os.path.join(index_dir, f\"{index_name}.index\")\n    meta_path = os.path.join(index_dir, f\"{index_name}.meta.json\")\n\n    if not os.path.exists(index_path) or not os.path.exists(meta_path):\n        raise FileNotFoundError(\"FAISS index or metadata file not found.\")\n\n    index = faiss.read_index(index_path)\n    with open(meta_path, \"r\", encoding=\"utf-8\") as f:\n        metadata = json.load(f)\n\n    return index, metadata"
   },
@@ -410,10 +436,10 @@
     "type": "function",
     "name": "embed_query",
     "qualified_name": "query.embed_query",
-    "start_line": 39,
-    "end_line": 40,
+    "start_line": 49,
+    "end_line": 50,
     "docstring": "",
-    "code": "def embed_query(query):\n    return embed_model.encode([query])[0]  # 1D array"
+    "code": "def embed_query(query):\n    return get_embed_model().encode([query])[0]  # 1D array"
   },
   {
     "file": "query.py",
@@ -423,8 +449,8 @@
     "type": "function",
     "name": "retrieve_top_chunks",
     "qualified_name": "query.retrieve_top_chunks",
-    "start_line": 42,
-    "end_line": 54,
+    "start_line": 52,
+    "end_line": 64,
     "docstring": "",
     "code": "def retrieve_top_chunks(query_vec, index, metadata, k=TOP_K):\n    D, I = index.search(np.array([query_vec]), k)\n\n    top_chunks = []\n    for score, idx in zip(D[0], I[0]):\n        if idx < len(metadata):\n            chunk = metadata[idx]\n            chunk[\"score\"] = float(score)\n            chunk[\"content\"] = chunk.get(\"docstring\", \"\") + \"\\n\" + chunk.get(\"code\", \"\")\n            top_chunks.append(chunk)\n\n    top_chunks.sort(key=lambda x: x[\"score\"])\n    return top_chunks"
   },
@@ -436,8 +462,8 @@
     "type": "function",
     "name": "build_prompt",
     "qualified_name": "query.build_prompt",
-    "start_line": 56,
-    "end_line": 65,
+    "start_line": 66,
+    "end_line": 75,
     "docstring": "",
     "code": "def build_prompt(chunks, query):\n    context_blocks = []\n    for chunk in chunks:\n        filename = chunk.get(\"rel_path\", chunk.get(\"file\", \"unknown_file.py\"))\n        qualified_name = chunk.get(\"qualified_name\", chunk.get(\"name\", \"unknown_function\"))\n        content = chunk.get(\"content\", \"\").strip()\n        context_blocks.append(f\"[File: {filename} | Symbol: {qualified_name}]\\n{content}\")\n\n    context = \"\\n---\\n\".join(context_blocks)\n    return f\"Context:\\n{context}\\n\\nQuestion: {query}\\nAnswer:\""
   },
@@ -449,8 +475,8 @@
     "type": "function",
     "name": "run_query_pipeline",
     "qualified_name": "query.run_query_pipeline",
-    "start_line": 67,
-    "end_line": 88,
+    "start_line": 77,
+    "end_line": 98,
     "docstring": "",
     "code": "def run_query_pipeline(question: str):\n    logger.info(\"Embedding query...\")\n    query_vec = embed_query(question)\n\n    logger.info(\"Loading index and metadata...\")\n    index, metadata = load_faiss_index(INDEX_DIR, INDEX_NAME)\n\n    logger.info(\"Searching for top chunks...\")\n    top_chunks = retrieve_top_chunks(query_vec, index, metadata)\n\n    logger.info(f\"Retrieved {len(top_chunks)} chunks.\")\n    prompt = build_prompt(top_chunks, question)\n\n    logger.info(\"Querying Gemini model...\")\n    answer = get_answer(prompt)\n\n    return {\n        \"question\": question,\n        \"answer\": answer,\n        \"prompt\": prompt,\n        \"chunks\": top_chunks,\n    }"
   },
@@ -462,8 +488,8 @@
     "type": "function",
     "name": "main",
     "qualified_name": "query.main",
-    "start_line": 90,
-    "end_line": 96,
+    "start_line": 100,
+    "end_line": 106,
     "docstring": "",
     "code": "def main():\n    parser = argparse.ArgumentParser(description=\"Ask a question to your codebase.\")\n    parser.add_argument(\"question\", type=str, help=\"The natural language question to ask\")\n    args = parser.parse_args()\n\n    result = run_query_pipeline(args.question)\n    print(\"\\n\ud83e\udd16 Gemini Answer:\\n\", result[\"answer\"])"
   },
@@ -713,5 +739,18 @@
     "end_line": 28,
     "docstring": "",
     "code": "class ConfigRequest(BaseModel):\n    api_key: str          # the user's LLM API key (required)\n    api_endpoint: str     # the LLM endpoint URL (required, must start with http/https)\n    store_dir: str        # directory path where qa_store.json and feedback.json will be stored"
+  },
+  {
+    "file": "sso_oidc.py",
+    "rel_path": "server/sso_oidc.py",
+    "repo": "codexpro",
+    "language": "python",
+    "type": "function",
+    "name": "register_oidc_client_dyn",
+    "qualified_name": "sso_oidc.register_oidc_client_dyn",
+    "start_line": 24,
+    "end_line": 36,
+    "docstring": "",
+    "code": "def register_oidc_client_dyn(oauth_registry: OAuth, tenant_id: str, issuer: str, client_id: str, client_secret: Optional[str], redirect_uri: str, scopes: str = \"openid email profile\"):\n    name = f\"oidc_tenant_{tenant_id}\"\n    if name in oauth_registry:\n        return name\n    oauth_registry.register(\n        name=name,\n        client_id=client_id,\n        client_secret=client_secret,\n        server_metadata_url=issuer.rstrip(\"/\") + \"/.well-known/openid-configuration\",\n        client_kwargs={\"scope\": scopes},\n        redirect_uri=redirect_uri,\n    )\n    return name"
   }
 ]

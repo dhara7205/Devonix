@@ -4,6 +4,7 @@ import json
 import os
 import sys
 from dotenv import load_dotenv
+from typing import Optional
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -21,7 +22,16 @@ INDEX_NAME = "faiss_index"
 TOP_K = 15
 
 # Load model once
-embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+# embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+_embed_model: Optional[SentenceTransformer] = None
+
+def get_embed_model():
+    global _embed_model
+    if _embed_model is None:
+        # load here when actually required
+        _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _embed_model
 
 def load_faiss_index(index_dir, index_name):
     index_path = os.path.join(index_dir, f"{index_name}.index")
@@ -37,7 +47,7 @@ def load_faiss_index(index_dir, index_name):
     return index, metadata
 
 def embed_query(query):
-    return embed_model.encode([query])[0]  # 1D array
+    return get_embed_model().encode([query])[0]  # 1D array
 
 def retrieve_top_chunks(query_vec, index, metadata, k=TOP_K):
     D, I = index.search(np.array([query_vec]), k)
