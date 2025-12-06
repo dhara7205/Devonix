@@ -1,5 +1,5 @@
 {
   "api_endpoint": "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={API_KEY}",
-  "api_key": "AIzaSyDYWQcpB-zbXjdiEYZVRADik9oLkn9pCoc",
+  "api_key": "YOUR_KEY",
   "store_dir": "C:\\Users\\dhara\\OneDrive\\Desktop\\Projects"
 }
